@@ -1,4 +1,4 @@
-package app.model.entity.character;
+package app.model.entity.hero;
 
 import app.model.entity.item.Item;
 import app.model.entity.user.User;

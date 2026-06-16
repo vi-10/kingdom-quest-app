@@ -1,6 +1,6 @@
 package app.model.entity.user;
 
-import app.model.entity.character.Hero;
+import app.model.entity.hero.Hero;
 import jakarta.persistence.*;
 import lombok.*;
 

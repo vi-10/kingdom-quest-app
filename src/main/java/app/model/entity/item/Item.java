@@ -1,5 +1,6 @@
 package app.model.entity.item;
 
+import app.model.entity.character.Hero;
 import app.model.entity.character.HeroClass;
 import jakarta.persistence.*;
 import lombok.*;
@@ -33,5 +34,5 @@ public class Item {
 
     @ManyToOne
     @JoinColumn(name = "owner_id")
-    private Character owner;
+    private Hero owner;
 }

@@ -1,5 +1,6 @@
 package app.model.entity.user;
 
+import app.model.entity.character.Hero;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -36,5 +37,5 @@ public class User {
     private boolean isActive;
 
     @OneToOne(mappedBy = "user", cascade = CascadeType.ALL)
-    private Character character;
+    private Hero hero;
 }

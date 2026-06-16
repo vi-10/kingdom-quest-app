@@ -15,8 +15,8 @@ import java.util.UUID;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-@Table(name = "characters")
-public class Character {
+@Table(name = "heroes")
+public class Hero {
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)

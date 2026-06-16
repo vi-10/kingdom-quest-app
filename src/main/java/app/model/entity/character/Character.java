@@ -2,10 +2,16 @@ package app.model.entity.character;
 
 import app.model.entity.user.User;
 import jakarta.persistence.*;
+import lombok.*;
 
 import java.util.ArrayList;
 import java.util.UUID;
 
+@Builder
+@Setter
+@Getter
+@AllArgsConstructor
+@NoArgsConstructor
 @Entity
 @Table(name = "characters")
 public class Character {

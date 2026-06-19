@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Available Quests - Kingdom Quest</title>
+    <link rel="stylesheet" href="/css/available-quests.css">
+</head>
+<body>
+
+<div class="container">
+
+    <div class="header">
+        <h1>Available Quests</h1>
+
+
+        <a href="/dashboard" class="back-btn">
+            Dashboard
+        </a>
+    </div>
+
+    <div class="hero-description">
+
+        <h2 th:text="${hero.heroClass}">WARRIOR</h2>
+
+        <p th:switch="${hero.heroClass.name()}">
+
+        <span th:case="'WARRIOR'">
+            Warriors are the bravest of the bunch. Their unmatched strength
+            allows them to overcome the toughest foes and defend the weak. <br>
+
+            Expertise: COMBAT!
+        </span>
+
+            <span th:case="'MAGE'">
+            Mages wield the power of the arcane. Through years of study,
+            they have mastered devastating spells and mystical knowledge. <br>
+
+            Expertise: MAGIC!
+        </span>
+
+            <span th:case="'ROGUE'">
+            Rogues thrive in the shadows. Agile and cunning, they excel
+            at infiltration, espionage, and precision strikes. <br>
+
+            Expertise: STEALTH!
+        </span>
+
+            <span th:case="'HEALER'">
+            Healers dedicate themselves to protecting and supporting others.
+            Their restorative abilities keep allies alive in the darkest battles. <br>
+
+            Expertise: SUPPORT!
+        </span>
+
+        </p>
+
+    </div>
+
+    <div class="quests-container">
+
+        <div class="quest-card"
+             th:each="quest : ${quests}">
+
+            <h2 th:text="${quest.name}">
+                Rat Extermination
+            </h2>
+
+            <div class="quest-details">
+
+                <p>
+                    <strong>Quest type:</strong>
+                    <span th:text="${quest.questType}"></span>
+                </p>
+
+                <p>
+                    <strong>Required Level:</strong>
+                    <span th:text="${quest.requiredLevel}"></span>
+                </p>
+
+                <p>
+                    <strong>XP Reward:</strong>
+                    <span th:text="${quest.rewardXp}"></span>
+                </p>
+
+                <p>
+                    <strong>Gold Reward:</strong>
+                    <span th:text="${quest.rewardGold}"></span>
+                </p>
+
+            </div>
+
+            <p class="description"
+               th:text="${quest.description}">
+                Help the villagers by eliminating rats.
+            </p>
+
+            <form th:action="@{/quests/{id}/complete(id=${quest.id})}"
+                  method="post">
+
+                <button type="submit"
+                        class="complete-btn">
+                    Complete Quest
+                </button>
+
+            </form>
+
+        </div>
+    </div>
+
+</div>
+
+</body>
+</html>

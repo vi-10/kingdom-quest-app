@@ -1,0 +1,59 @@
+body {
+    font-family: Georgia, serif;
+
+
+    background: linear-gradient(
+            rgba(20, 20, 20, 0.7),
+            rgba(20, 20, 20, 0.7)
+    ),
+    url("/images/background.jpg");
+
+    background-size: cover;
+    background-position: center;
+
+    color: white;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
+
+.result-container {
+    text-align: center;
+    background-color: #1b1b1b;
+}
+
+.result {
+    padding: 40px;
+    border-radius: 12px;
+    width: 500px;
+    margin: auto;
+}
+
+.success {
+    border: 2px solid #4caf50;
+}
+
+.failure {
+    border: 2px solid #e53935;
+}
+
+h1 {
+    margin-bottom: 20px;
+}
+
+p {
+    margin-bottom: 30px;
+}
+
+.btn {
+    padding: 12px 20px;
+    background-color: #8b5e34;
+    color: white;
+    text-decoration: none;
+    border-radius: 8px;
+}
+
+.btn:hover {
+    background-color: #a97142;
+}

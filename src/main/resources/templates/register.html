@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Register - Kingdom Quest</title>
+    <link rel="stylesheet" href="/css/register.css">
+</head>
+<body>
+
+<div class="register-container">
+
+    <h1 class="title">Kingdom Quest</h1>
+
+    <h2 class="form-title">Create Your Hero</h2>
+
+    <form th:action="@{/register}" th:object="${registerDTO}" method="post">
+
+        <div class="form-group">
+            <label for="username">Username</label>
+            <input type="text"
+                   id="username"
+                   th:field="*{username}"
+                   placeholder="Enter username">
+        </div>
+
+
+        <div class="form-group">
+            <label for="password">Password</label>
+            <input type="password"
+                   id="password"
+                   th:field="*{password}"
+                   placeholder="Enter password">
+        </div>
+
+        <div class="form-group">
+            <label for="roleplayName">Roleplay Name</label>
+            <input type="text"
+                   id="roleplayName"
+                   th:field="*{roleplayName}"
+                   placeholder="Hero name">
+        </div>
+
+        <div class="form-group">
+            <label for="heroClass">Hero Class</label>
+            <select id="heroClass" th:field="*{heroClass}">
+                <option value="">Select Class</option>
+                <option value="WARRIOR">Warrior</option>
+                <option value="MAGE">Mage</option>
+                <option value="ROGUE">Rogue</option>
+                <option value="HEALER">Healer</option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label for="server">Server</label>
+            <select id="server" th:field="*{server}">
+                <option value="">Select Server</option>
+                <option value="EUROPE">Europe</option>
+                <option value="ASIA_PACIFIC">Asia Pacific</option>
+                <option value="AFRICA">Africa</option>
+                <option value="NORTH_AMERICA">North America</option>
+                <option value="SOUTH_AMERICA">South America</option>
+            </select>
+        </div>
+
+        <button type="submit" class="btn">
+            Register
+        </button>
+
+    </form>
+
+    <p class="login-text">
+        Already have an account?
+        <a href="/login">Login here</a>
+    </p>
+
+</div>
+
+</body>
+</html>

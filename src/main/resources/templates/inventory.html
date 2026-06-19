@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Inventory</title>
+
+    <link rel="stylesheet" href="/css/items.css">
+</head>
+<body>
+
+<div class="container">
+
+    <div class="header">
+
+        <div>
+            <h1>Your Inventory</h1>
+
+            <p class="forge-subtitle">
+                All items forged during your journey are stored here.
+            </p>
+        </div>
+
+        <a href="/dashboard" class="back-btn">
+            Dashboard
+        </a>
+
+    </div>
+
+    <div class="items-container">
+
+        <div class="item-card"
+             th:each="item : ${inventoryItems}">
+
+            <h2 th:text="${item.name}">
+                Iron Sword
+            </h2>
+
+            <div class="item-details">
+
+                <p>
+                    <strong>Rarity:</strong>
+                    <span th:text="${item.rarity}"></span>
+                </p>
+
+            </div>
+
+        </div>
+    </div>
+
+</div>
+
+</body>
+</html>

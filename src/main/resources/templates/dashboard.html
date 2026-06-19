@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard</title>
+    <link rel="stylesheet" href="/css/dashboard.css">
+</head>
+<body>
+
+<div class="dashboard-container">
+
+    <div class="profile-panel">
+
+        <img th:src="@{'/images/' + ${user.profilePicture}}"
+             alt="Profile Picture"
+             class="profile-picture">
+
+        <h1 class="roleplay-name"
+            th:text="${hero.roleplayName}">
+            Arthas
+        </h1>
+
+        <h2 class="hero-class"
+            th:text="${hero.heroClass}">
+            WARRIOR
+        </h2>
+
+        <div class="account-info">
+
+            <p>
+                <strong>Username:</strong>
+                <span th:text="${user.username}"></span>
+            </p>
+
+            <p>
+                <strong>Email:</strong>
+                <span th:text="${user.email}"></span>
+            </p>
+
+            <p>
+                <strong>Server:</strong>
+                <span th:text="${user.server}"></span>
+            </p>
+
+        </div>
+
+        <div class="hero-stats">
+
+            <p>
+                <strong>Level:</strong>
+                <span th:text="${hero.level}"></span>
+            </p>
+
+            <p>
+                <strong>XP:</strong>
+                <span th:text="${hero.xp}"></span>
+            </p>
+
+            <p>
+                <strong>Gold:</strong>
+                <span th:text="${hero.gold}"></span>
+            </p>
+
+        </div>
+
+        <a href="/profile/edit" class="edit-btn">
+            Edit Profile
+        </a>
+
+    </div>
+
+    <div class="navigation-panel" >
+
+
+
+        <div class="menu-section">
+
+            <h2>Quests</h2>
+
+            <a href="/quests">Available Quests</a>
+
+        </div>
+
+        <div class="menu-section">
+
+            <h2>Items</h2>
+
+            <a href="/items/forge">Forge</a>
+            <a href="/items/inventory">Inventory</a>
+
+        </div>
+
+        <div class="menu-section"
+             th:if="${user.role.name() == 'ADMIN'}">
+
+            <h2>Admin</h2>
+
+            <a href="/admin/users">Profiles</a>
+
+        </div>
+
+    </div>
+
+</div>
+
+</body>
+</html>

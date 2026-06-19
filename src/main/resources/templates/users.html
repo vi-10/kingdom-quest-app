@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Users</title>
+    <link rel="stylesheet" href="/css/users.css">
+</head>
+<body>
+
+<div class="container">
+
+    <div class="header">
+
+        <h1>All Users</h1>
+
+        <a href="/dashboard" class="back-btn">Dashboard</a>
+
+    </div>
+
+    <div class="users-container">
+
+        <div class="user-card"
+             th:each="user : ${users}">
+
+            <h2 th:text="${user.username}">Username</h2>
+
+            <p>
+                <strong>ID:</strong>
+                <span th:text="${user.id}"></span>
+            </p>
+
+            <p>
+                <strong>Email:</strong>
+                <span th:text="${user.email}"></span>
+            </p>
+
+            <p>
+                <strong>Server:</strong>
+                <span th:text="${user.server}"></span>
+            </p>
+
+            <p>
+                <strong>Role:</strong>
+                <span th:text="${user.role}"></span>
+            </p>
+
+            <p>
+                <strong>Status:</strong>
+                <span th:text="${user.active ? 'ACTIVE' : 'INACTIVE'}"></span>
+            </p>
+
+            <form th:action="@{/admin/users/{id}/role(id=${user.id})}"
+                  method="post">
+
+                <button type="submit"
+                        class="btn">
+                    Change Role
+                </button>
+
+            </form>
+
+            <form th:action="@{/admin/users/{id}/status(id=${user.id})}"
+                  method="post">
+
+                <button type="submit"
+                        class="btn danger">
+                    Activate / Deactivate
+                </button>
+
+            </form>
+
+        </div>
+
+    </div>
+
+</div>
+
+</body>
+</html>

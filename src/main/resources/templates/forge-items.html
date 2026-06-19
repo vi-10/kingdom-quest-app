@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Forge Items</title>
+    <link rel="stylesheet" href="/css/items.css">
+</head>
+<body>
+
+<div class="container">
+
+    <div class="header">
+
+        <div>
+            <h1>The Royal Forge</h1>
+
+            <p class="forge-subtitle">
+                Craft legendary equipment using the gold earned through your adventures.
+            </p>
+        </div>
+
+        <a href="/dashboard" class="back-btn">
+            Dashboard
+        </a>
+
+    </div>
+
+    <div class="gold-display">
+
+        <h2>
+            Your Gold:
+            <span th:text="${hero.gold}">0</span>
+        </h2>
+
+        <p class="forge-message"
+           th:if="${forgeResult != null}"
+           th:text="${forgeResult.message}">
+        </p>
+
+    </div>
+
+
+
+    <div class="items-container">
+
+        <div class="item-card"
+             th:each="item : ${items}">
+
+            <h2 th:text="${item.name}">
+                Iron Sword
+            </h2>
+
+            <div class="item-details">
+
+                <p>
+                    <strong>Type:</strong>
+                    <span th:text="${item.heroClass}"></span>
+                </p>
+
+                <p>
+                    <strong>Rarity:</strong>
+                    <span th:text="${item.rarity}"></span>
+                </p>
+
+                <p>
+                    <strong>Cost:</strong>
+                    <span th:text="${item.costGold}"></span>
+                    Gold
+                </p>
+
+            </div>
+
+
+            <form th:action="@{/items/{id}/forge(id=${item.id})}"
+                  method="post">
+
+                <button type="submit"
+                        class="forge-btn">
+                    Forge Item
+                </button>
+
+            </form>
+
+        </div>
+    </div>
+
+</div>
+
+</body>
+</html>

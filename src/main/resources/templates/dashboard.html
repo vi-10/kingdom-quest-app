@@ -12,7 +12,7 @@
 
     <div class="profile-panel">
 
-        <img th:src="@{'/images/' + ${user.profilePicture}}"
+        <img th:src="${user.profilePicture}}"
              alt="Profile Picture"
              class="profile-picture">
 

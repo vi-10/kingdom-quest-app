@@ -30,9 +30,4 @@ public class Item {
     @Enumerated(EnumType.STRING)
     private ItemRarity rarity;
 
-    private boolean isActive;
-
-    @ManyToOne
-    @JoinColumn(name = "owner_id")
-    private Hero owner;
 }

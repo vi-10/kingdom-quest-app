@@ -1,5 +1,6 @@
 package app.model.dto.user;
 
+import app.model.dto.hero.HeroDTO;
 import app.model.entity.hero.Hero;
 import app.model.entity.user.Role;
 import app.model.entity.user.Server;
@@ -14,11 +15,9 @@ import java.util.UUID;
 public class UserDTO {
     private UUID id;
     private String username;
-    private String password;
     private String email;
     private String profilePicture;
     private Role role;
     private Server server;
     private boolean isActive;
-    private Hero hero;
 }

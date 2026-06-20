@@ -31,5 +31,4 @@ public class Quest {
 
     private int rewardGold;
 
-    private boolean isActive;
 }

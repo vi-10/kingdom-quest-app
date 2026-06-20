@@ -1,6 +1,6 @@
 package app.model.entity.hero;
 
-import app.model.entity.item.Item;
+import app.model.entity.heroitem.HeroItem;
 import app.model.entity.user.User;
 import jakarta.persistence.*;
 import lombok.*;
@@ -37,6 +37,6 @@ public class Hero {
     @JoinColumn(name = "user_id")
     private User user;
 
-    @OneToMany(mappedBy = "owner")
-    private List<Item> items = new ArrayList<>();
+    @OneToMany(mappedBy = "hero")
+    private List<HeroItem> items = new ArrayList<>();
 }

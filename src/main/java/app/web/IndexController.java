@@ -62,4 +62,17 @@ public class IndexController {
 
         return new ModelAndView("redirect:/dashboard");
     }
+
+    @PostMapping("/register")
+    public ModelAndView registerUser(@Valid @ModelAttribute("registerData") RegisterDTO registerData,
+                                     BindingResult bindingResult) {
+
+        if (bindingResult.hasErrors()) {
+            return new ModelAndView("register");
+        }
+
+        userService.register(registerData);
+
+        return new ModelAndView("redirect:/login");
+    }
 }

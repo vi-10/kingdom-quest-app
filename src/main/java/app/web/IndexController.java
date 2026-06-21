@@ -97,4 +97,12 @@ public class IndexController {
         return modelAndView;
     }
 
+    @GetMapping("/logout")
+    public String logout(HttpSession session) {
+
+        session.invalidate();
+
+        return "redirect:/";
+    }
+
 }

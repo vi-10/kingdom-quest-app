@@ -60,6 +60,8 @@ public class ItemService {
 
         HeroItem heroItem = HeroItem.builder().hero(hero).item(item).build();
 
+        hero.getItems().add(heroItem);
+
         heroItemRepository.save(heroItem);
         heroRepository.save(hero);
 

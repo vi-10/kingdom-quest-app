@@ -2,8 +2,11 @@ package app.mapper.hero;
 
 import app.model.dto.hero.HeroDTO;
 import app.model.entity.hero.Hero;
+import lombok.NoArgsConstructor;
+import org.springframework.stereotype.Component;
 
-
+@NoArgsConstructor
+@Component
 public class HeroMapper {
 
     public static HeroDTO toHeroDTO(Hero hero){

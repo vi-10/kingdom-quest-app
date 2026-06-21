@@ -36,7 +36,7 @@ public class QuestService {
 
     public QuestResultDTO completeQuest(UUID id, UUID userId) {
         Hero hero = heroRepository.findByUserId(userId)
-                .orElseThrow(() -> new UserNotFoundException("User not found"));
+                .orElseThrow(() -> new UserNotFoundException("Hero not found"));
 
         Quest quest = questRepository.findById(id)
                 .orElseThrow(() -> new QuestNotFoundException("Quest not found"));

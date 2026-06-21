@@ -21,7 +21,7 @@
 
     <div class="hero-description">
 
-        <h2 th:text="${hero.heroClass}">WARRIOR</h2>
+        <h2 th:text="${hero.heroClass}"></h2>
 
         <p th:switch="${hero.heroClass.name()}">
 
@@ -62,7 +62,7 @@
         <div class="quest-card"
              th:each="quest : ${quests}">
 
-            <h2 th:text="${quest.name}">
+            <h2 th:text="${quest.title}">
                 Rat Extermination
             </h2>
 

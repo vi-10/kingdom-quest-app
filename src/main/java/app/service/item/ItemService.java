@@ -43,7 +43,7 @@ public class ItemService {
     public ForgeResultDTO forgeItem(UUID itemId, UUID userId) {
 
         Hero hero = heroRepository.findByUserId(userId)
-                .orElseThrow(() -> new UserNotFoundException("User not found"));
+                .orElseThrow(() -> new UserNotFoundException("Hero not found"));
 
         Item item = itemRepository.findById(itemId)
                 .orElseThrow(() -> new ItemNotFoundException("Item not found"));
@@ -66,5 +66,17 @@ public class ItemService {
         heroRepository.save(hero);
 
         return null;
+    }
+
+    public List<ItemDTO> getInventory(UUID userId) {
+
+        Hero hero = heroRepository.findByUserId(userId)
+                .orElseThrow(() -> new UserNotFoundException("Hero not found"));
+
+        return hero.getItems()
+                .stream()
+                .map(HeroItem::getItem)
+                .map(ItemMapper::toItemDTO)
+                .toList();
     }
 }

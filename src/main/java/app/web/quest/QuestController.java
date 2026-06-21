@@ -2,6 +2,7 @@ package app.web.quest;
 
 import app.model.dto.hero.HeroDTO;
 import app.model.dto.quest.QuestDTO;
+import app.model.dto.quest.QuestResultDTO;
 import app.model.dto.user.UserDTO;
 import app.service.hero.HeroService;
 import app.service.quest.QuestService;
@@ -10,6 +11,8 @@ import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.servlet.ModelAndView;
 
 import java.util.List;
@@ -46,6 +49,20 @@ public class QuestController {
         modelAndView.addObject("user", user);
         modelAndView.addObject("hero", hero);
         modelAndView.addObject("quests", quests);
+
+        return modelAndView;
+    }
+
+    @PostMapping("/quests/{id}/complete")
+    public ModelAndView completeQuest(@PathVariable UUID id,
+                                      HttpSession session) {
+
+        UUID userId = (UUID) session.getAttribute("userId");
+
+        QuestResultDTO result = questService.completeQuest(id, userId);
+
+        ModelAndView modelAndView = new ModelAndView("quest-result");
+        modelAndView.addObject("result", result);
 
         return modelAndView;
     }

@@ -54,17 +54,17 @@
 
                 <p>
                     <strong>Type:</strong>
-                    <span th:text="${item.heroClass}"></span>
+                    <span th:text="${item.heroClass.name()}"></span>
                 </p>
 
                 <p>
                     <strong>Rarity:</strong>
-                    <span th:text="${item.rarity}"></span>
+                    <span th:text="${item.rarity.name()}"></span>
                 </p>
 
                 <p>
                     <strong>Cost:</strong>
-                    <span th:text="${item.costGold}"></span>
+                    <span th:text="${item.requiredGold}"></span>
                     Gold
                 </p>
 

@@ -13,12 +13,14 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.ModelAndView;
 
 import java.util.List;
 import java.util.UUID;
 
 @Controller
+@RequestMapping("/items")
 public class ItemController {
     private HeroService heroService;
     private ItemService itemService;
@@ -29,7 +31,7 @@ public class ItemController {
         this.itemService = itemService;
     }
 
-    @GetMapping("/items/forge")
+    @GetMapping("/forge")
     public ModelAndView getForgePage(HttpSession session) {
 
         UUID userId = (UUID) session.getAttribute("userId");
@@ -45,7 +47,7 @@ public class ItemController {
         return modelAndView;
     }
 
-    @PostMapping("/items/{id}/forge")
+    @PostMapping("/{id}/forge")
     public ModelAndView forgeItem(@PathVariable UUID id, HttpSession session) {
 
         UUID userId = (UUID) session.getAttribute("userId");
@@ -64,7 +66,7 @@ public class ItemController {
         return modelAndView;
     }
 
-    @GetMapping("/items/inventory")
+    @GetMapping("/inventory")
     public ModelAndView getInventory(HttpSession session) {
 
         UUID userId = (UUID) session.getAttribute("userId");

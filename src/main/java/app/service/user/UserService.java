@@ -4,6 +4,7 @@ import app.exception.InvalidCredentialsException;
 import app.exception.UserAlreadyExistsException;
 import app.exception.UserInactiveException;
 import app.exception.UserNotFoundException;
+import app.mapper.quest.QuestMapper;
 import app.mapper.user.UserMapper;
 import app.model.dto.user.LoginDTO;
 import app.model.dto.user.RegisterDTO;
@@ -19,6 +20,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -103,5 +105,9 @@ public class UserService {
     public UserDTO getById(UUID id) {
         User user = userRepository.findById(id).orElseThrow(() -> new UserNotFoundException("User doesn't exist."));
         return UserMapper.toUserDTO(user);
+    }
+
+    public List<UserDTO> getAllUsers() {
+        return userRepository.findAll().stream().map(UserMapper::toUserDTO).toList();
     }
 }

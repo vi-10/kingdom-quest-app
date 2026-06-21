@@ -4,6 +4,7 @@ import app.model.dto.hero.HeroDTO;
 import app.model.dto.user.LoginDTO;
 import app.model.dto.user.RegisterDTO;
 import app.model.dto.user.UserDTO;
+import app.model.entity.user.Role;
 import app.service.hero.HeroService;
 import app.service.user.UserService;
 import jakarta.servlet.http.HttpSession;
@@ -16,6 +17,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.servlet.ModelAndView;
 
+import java.util.List;
 import java.util.UUID;
 
 @Controller
@@ -102,6 +104,17 @@ public class UserController {
         session.invalidate();
 
         return "redirect:/";
+    }
+
+    @GetMapping("/admin/users")
+    public ModelAndView getAllUsers() {
+
+        List<UserDTO> users = userService.getAllUsers();
+
+        ModelAndView modelAndView = new ModelAndView("users");
+        modelAndView.addObject("users", users);
+
+        return modelAndView;
     }
 
 }

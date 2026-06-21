@@ -1,8 +1,10 @@
 package app.web;
 
+import app.model.dto.hero.HeroDTO;
 import app.model.dto.user.LoginDTO;
 import app.model.dto.user.RegisterDTO;
 import app.model.dto.user.UserDTO;
+import app.service.hero.HeroService;
 import app.service.user.UserService;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
@@ -15,13 +17,17 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.servlet.ModelAndView;
 
+import java.util.UUID;
+
 @Controller
 public class IndexController {
     private UserService userService;
+    private HeroService heroService;
 
     @Autowired
-    public IndexController(UserService userService) {
+    public IndexController(UserService userService, HeroService heroService) {
         this.userService = userService;
+        this.heroService = heroService;
     }
 
     @GetMapping("/")
@@ -75,4 +81,20 @@ public class IndexController {
 
         return new ModelAndView("redirect:/login");
     }
+
+    @GetMapping("/dashboard")
+    public ModelAndView getDashboard(HttpSession httpSession) {
+
+        UUID userId = (UUID) httpSession.getAttribute("userId");
+
+        UserDTO user = userService.getById(userId);
+        HeroDTO hero = heroService.getByUserId(userId);
+
+        ModelAndView modelAndView = new ModelAndView("dashboard");
+        modelAndView.addObject("user", user);
+        modelAndView.addObject("hero", hero);
+
+        return modelAndView;
+    }
+
 }

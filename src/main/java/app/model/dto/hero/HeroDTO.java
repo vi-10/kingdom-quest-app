@@ -1,15 +1,9 @@
 package app.model.dto.hero;
 
-import app.model.dto.heroitem.HeroItemDTO;
-import app.model.dto.item.ItemDTO;
-import app.model.dto.user.UserDTO;
+
 import app.model.entity.hero.HeroClass;
-import app.model.entity.item.Item;
-import app.model.entity.user.User;
 import lombok.Builder;
 import lombok.Data;
-
-import java.util.List;
 import java.util.UUID;
 
 @Data

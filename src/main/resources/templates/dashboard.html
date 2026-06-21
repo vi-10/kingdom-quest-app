@@ -12,18 +12,16 @@
 
     <div class="profile-panel">
 
-        <img th:src="${user.profilePicture}}"
+        <img th:src="${user.profilePicture}"
              alt="Profile Picture"
              class="profile-picture">
 
         <h1 class="roleplay-name"
             th:text="${hero.roleplayName}">
-            Arthas
         </h1>
 
         <h2 class="hero-class"
-            th:text="${hero.heroClass}">
-            WARRIOR
+            th:text="${hero.heroClass.name()}">
         </h2>
 
         <div class="account-info">

@@ -121,4 +121,10 @@ public class UserController {
         return new ModelAndView("redirect:/admin/users");
     }
 
+    @PutMapping("/admin/users/{id}/status")
+    public ModelAndView switchStatus(@PathVariable UUID id) {
+        userService.switchStatus(id);
+        return new ModelAndView("redirect:/admin/users");
+    }
+
 }

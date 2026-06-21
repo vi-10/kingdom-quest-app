@@ -120,4 +120,10 @@ public class UserService {
         }
         userRepository.save(user);
     }
+
+    public void switchStatus(UUID id) {
+        User user = userRepository.findById(id).orElseThrow(() -> new UserNotFoundException("User doesn't exist."));
+        user.setActive(!user.isActive());
+        userRepository.save(user);
+    }
 }

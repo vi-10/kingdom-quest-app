@@ -110,4 +110,14 @@ public class UserService {
     public List<UserDTO> getAllUsers() {
         return userRepository.findAll().stream().map(UserMapper::toUserDTO).toList();
     }
+
+    public void switchRole(UUID id) {
+        User user = userRepository.findById(id).orElseThrow(() -> new UserNotFoundException("User doesn't exist."));
+        if (user.getRole() == Role.PLAYER) {
+            user.setRole(Role.ADMIN);
+        } else {
+            user.setRole(Role.PLAYER);
+        }
+        userRepository.save(user);
+    }
 }

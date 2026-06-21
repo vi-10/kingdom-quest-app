@@ -60,7 +60,7 @@
             </form>
 
             <form th:action="@{/admin/users/{id}/status(id=${user.id})}"
-                  method="post">
+                  th:method="PUT">
 
                 <button type="submit"
                         class="btn danger">

@@ -50,7 +50,7 @@
             </p>
 
             <form th:action="@{/admin/users/{id}/role(id=${user.id})}"
-                  method="post">
+                  th:method="PUT">
 
                 <button type="submit"
                         class="btn">

@@ -40,13 +40,11 @@ public class QuestController {
             return new ModelAndView("redirect:/login");
         }
 
-        UserDTO user = userService.getById(userId);
         HeroDTO hero = heroService.getByUserId(userId);
 
         List<QuestDTO> quests = questService.getAllQuests();
 
         ModelAndView modelAndView = new ModelAndView("available-quests");
-        modelAndView.addObject("user", user);
         modelAndView.addObject("hero", hero);
         modelAndView.addObject("quests", quests);
 

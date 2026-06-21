@@ -13,22 +13,18 @@
 
         <h1>Quest Completed!</h1>
 
-        <p>
-            You have successfully completed the quest!
-        </p>
+        <p th:text="${result.message}"></p>
 
-        <a href="/available-quests" class="btn">Back to Quests</a>
+        <a href="/quests" class="btn">Back to Quests</a>
     </div>
 
     <div th:if="${!result.success}" class="result failure">
 
         <h1>Quest Failed</h1>
 
-        <p th:text="${result.message}">
-            You did not meet the requirements.
-        </p>
+        <p th:text="${result.message}"></p>
 
-        <a href="/available-quests" class="btn">Try Again</a>
+        <a href="/quests" class="btn">Try Again</a>
     </div>
 
 </div>

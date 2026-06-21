@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Quest Administration</title>
+    <link rel="stylesheet" href="/css/quest-administration.css">
+</head>
+<body>
+
+<div class="container">
+
+    <div class="header">
+
+        <h1>Quest Administration</h1>
+
+        <a href="/dashboard" class="back-btn">
+            Dashboard
+        </a>
+
+    </div>
+
+    <div class="subtitle">
+
+        <p>
+            Create, edit and delete quests available in the kingdom.
+        </p>
+
+    </div>
+
+    <div class="actions-container">
+
+        <a href="/admin/quests/create"
+           class="action-card">
+
+            <h2>Create Quest</h2>
+
+            <p>
+                Add a new quest for players to complete.
+            </p>
+
+        </a>
+
+        <a href="/admin/quests/edit"
+           class="action-card">
+
+            <h2>Edit Quest</h2>
+
+            <p>
+                Modify an existing quest.
+            </p>
+
+        </a>
+
+        <a href="/admin/quests/delete"
+           class="action-card danger">
+
+            <h2>Delete Quest</h2>
+
+            <p>
+                Permanently remove a quest.
+            </p>
+
+        </a>
+
+    </div>
+
+</div>
+
+</body>
+</html>

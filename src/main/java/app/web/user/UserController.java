@@ -127,4 +127,9 @@ public class UserController {
         return new ModelAndView("redirect:/admin/users");
     }
 
+    @GetMapping("/admin/quests")
+    public ModelAndView getQuestAdminPage(){
+        return new ModelAndView("quests-administration");
+    }
+
 }

@@ -1,11 +1,17 @@
 package app.service.user;
 
 import app.exception.InvalidCredentialsException;
+import app.exception.UserAlreadyExistsException;
 import app.exception.UserInactiveException;
 import app.mapper.user.UserMapper;
 import app.model.dto.user.LoginDTO;
+import app.model.dto.user.RegisterDTO;
 import app.model.dto.user.UserDTO;
+import app.model.entity.hero.Hero;
+import app.model.entity.hero.HeroClass;
+import app.model.entity.user.Role;
 import app.model.entity.user.User;
+import app.repository.hero.HeroRepository;
 import app.repository.user.UserRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,7 +24,7 @@ import java.util.Optional;
 @Transactional
 public class UserService {
     private UserRepository userRepository;
-    private PasswordEncoder passwordEncoder;
+    private PasswordEncoder passwordEncoder;;
 
     @Autowired
     public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder) {
@@ -38,6 +44,55 @@ public class UserService {
         if (!passwordEncoder.matches(loginData.getPassword(), user.getPassword())) {
             throw new InvalidCredentialsException("Invalid username or password");
         }
+
+        return UserMapper.toUserDTO(user);
+    }
+
+    private String getDefaultProfilePicture(HeroClass heroClass) {
+
+        return switch (heroClass) {
+            case WARRIOR -> "/images/warrior.png";
+            case MAGE -> "/images/mage.png";
+            case ROGUE -> "/images/rogue.png";
+            case HEALER -> "/images/healer.png";
+        };
+    }
+
+    public UserDTO register(RegisterDTO registerData) {
+
+        if (userRepository.existsByUsername(registerData.getUsername())) {
+            throw new UserAlreadyExistsException(
+                    "Username already exists."
+            );
+        }
+
+
+        User user = User.builder()
+                .username(registerData.getUsername())
+                .password(passwordEncoder.encode(registerData.getPassword()))
+                .email(registerData.getEmail())
+                .profilePicture(
+                        getDefaultProfilePicture(registerData.getHeroClass())
+                )
+                .role(Role.PLAYER)
+                .server(registerData.getServer())
+                .isActive(true)
+                .build();
+
+
+
+        Hero hero = Hero.builder()
+                .roleplayName(registerData.getRoleplayName())
+                .heroClass(registerData.getHeroClass())
+                .level(1)
+                .xp(0)
+                .gold(100)
+                .user(user)
+                .build();
+
+        user.setHero(hero);
+
+        userRepository.save(user);
 
         return UserMapper.toUserDTO(user);
     }

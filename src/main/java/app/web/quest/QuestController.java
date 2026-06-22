@@ -103,8 +103,7 @@ public class QuestController {
     }
 
     @PutMapping("/admin/quests/edit")
-    public ModelAndView editQuest(
-            @Valid @ModelAttribute("questData") EditQuestDTO questData,
+    public ModelAndView editQuest(@Valid @ModelAttribute("questData") EditQuestDTO questData,
             BindingResult bindingResult) {
 
         if (bindingResult.hasErrors()) {
@@ -127,5 +126,13 @@ public class QuestController {
         modelAndView.addObject("quests", questService.getAllQuests());
 
         return modelAndView;
+    }
+
+    @DeleteMapping("/admin/quests/delete")
+    public ModelAndView deleteQuest(@RequestParam UUID questId) {
+
+        questService.deleteQuest(questId);
+
+        return new ModelAndView("redirect:/admin/quests");
     }
 }

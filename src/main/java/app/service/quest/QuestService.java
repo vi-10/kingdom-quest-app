@@ -117,4 +117,11 @@ public class QuestService {
     }
 
 
+    public void deleteQuest(UUID questId) {
+        if (!questRepository.existsById(questId)) {
+            throw new QuestNotFoundException("Quest not found.");
+        }
+
+        questRepository.deleteById(questId);
+    }
 }

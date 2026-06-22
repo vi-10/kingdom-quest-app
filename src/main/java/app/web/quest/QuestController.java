@@ -119,4 +119,13 @@ public class QuestController {
 
         return new ModelAndView("redirect:/admin/quests");
     }
+
+    @GetMapping("/admin/quests/delete")
+    public ModelAndView getDeleteQuestPage() {
+
+        ModelAndView modelAndView = new ModelAndView("delete-quest");
+        modelAndView.addObject("quests", questService.getAllQuests());
+
+        return modelAndView;
+    }
 }

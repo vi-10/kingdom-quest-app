@@ -1,10 +1,7 @@
 package app.model.dto.user;
 
-import app.model.dto.hero.HeroDTO;
-import app.model.entity.hero.Hero;
 import app.model.entity.user.Role;
 import app.model.entity.user.Server;
-import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Data;
 

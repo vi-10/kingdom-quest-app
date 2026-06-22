@@ -13,11 +13,11 @@ import java.util.List;
 
 @Slf4j
 @Component
-public class itemInit implements CommandLineRunner {
+public class ItemInit implements CommandLineRunner {
     private ItemRepository itemRepository;
 
     @Autowired
-    public itemInit(ItemRepository itemRepository) {
+    public ItemInit(ItemRepository itemRepository) {
         this.itemRepository = itemRepository;
     }
 

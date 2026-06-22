@@ -15,7 +15,7 @@ import java.util.UUID;
 
 @Component
 public class SessionInterceptor implements HandlerInterceptor {
-    private UserService userService;
+    private final UserService userService;
     private static final Set<String> UNAUTHENTICATED_ENDPOINTS = Set.of("/", "/login", "/register");
 
     @Autowired

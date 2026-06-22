@@ -70,16 +70,12 @@ public class QuestService {
 
         return QuestResultDTO.builder()
                 .success(true)
-                .message("You earned " + quest.getRewardXp() + " XP and " +
-                        quest.getRewardGold() + " gold!")
-                .build();
+                .message("You earned " + quest.getRewardXp() + " XP and " + quest.getRewardGold() + " gold!").build();
     }
 
     public void createQuest(CreateQuestDTO questData) {
         if (questRepository.existsByTitle(questData.getTitle())) {
-            throw new QuestAlreadyExistsException(
-                    "A quest with this title already exists"
-            );
+            throw new QuestAlreadyExistsException("A quest with this title already exists");
         }
 
         Quest quest = Quest.builder()
@@ -101,7 +97,7 @@ public class QuestService {
         Optional<Quest> existingQuest = questRepository.findByTitle(questData.getTitle());
 
         if (existingQuest.isPresent() && !existingQuest.get().getId().equals(questData.getId())) {
-            throw new QuestAlreadyExistsException("A quest with this name already exists"
+            throw new QuestAlreadyExistsException("A quest with this title already exists"
             );
         }
 

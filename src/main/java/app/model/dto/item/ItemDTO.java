@@ -1,7 +1,5 @@
 package app.model.dto.item;
 
-import app.model.dto.hero.HeroDTO;
-import app.model.entity.hero.Hero;
 import app.model.entity.hero.HeroClass;
 import app.model.entity.item.ItemRarity;
 import lombok.Builder;

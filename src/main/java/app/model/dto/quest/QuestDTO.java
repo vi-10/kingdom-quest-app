@@ -1,7 +1,6 @@
 package app.model.dto.quest;
 
 import app.model.entity.quest.QuestType;
-import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Data;
 

@@ -1,17 +1,13 @@
 package app.service.item;
 
 import app.exception.ItemNotFoundException;
-import app.exception.QuestNotFoundException;
 import app.exception.UserNotFoundException;
 import app.mapper.item.ItemMapper;
-import app.mapper.quest.QuestMapper;
 import app.model.dto.item.ForgeResultDTO;
 import app.model.dto.item.ItemDTO;
-import app.model.dto.quest.QuestDTO;
 import app.model.entity.hero.Hero;
 import app.model.entity.heroitem.HeroItem;
 import app.model.entity.item.Item;
-import app.model.entity.quest.Quest;
 import app.repository.hero.HeroRepository;
 import app.repository.heroitem.HeroItemRepository;
 import app.repository.item.ItemRepository;
@@ -49,7 +45,7 @@ public class ItemService {
                 .orElseThrow(() -> new ItemNotFoundException("Item not found"));
 
         if (hero.getHeroClass() != item.getHeroClass()) {
-            return ForgeResultDTO.builder().message("Incorrect hero class.").build();
+            return ForgeResultDTO.builder().message(String.format("A %s can't forge this item.", hero.getHeroClass().name().toLowerCase())).build();
         }
 
         if (hero.getGold() < item.getRequiredGold()) {

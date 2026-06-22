@@ -1,6 +1,5 @@
 package app.init;
 
-import app.model.dto.user.RegisterDTO;
 import app.model.entity.hero.Hero;
 import app.model.entity.hero.HeroClass;
 import app.model.entity.user.Role;

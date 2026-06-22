@@ -3,8 +3,6 @@ package app.web.item;
 import app.model.dto.hero.HeroDTO;
 import app.model.dto.item.ForgeResultDTO;
 import app.model.dto.item.ItemDTO;
-import app.model.entity.hero.Hero;
-import app.model.entity.item.Item;
 import app.service.hero.HeroService;
 import app.service.item.ItemService;
 import jakarta.servlet.http.HttpSession;

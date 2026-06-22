@@ -4,7 +4,6 @@ import app.model.dto.hero.HeroDTO;
 import app.model.dto.user.LoginDTO;
 import app.model.dto.user.RegisterDTO;
 import app.model.dto.user.UserDTO;
-import app.model.entity.user.Role;
 import app.service.hero.HeroService;
 import app.service.user.UserService;
 import jakarta.servlet.http.HttpSession;

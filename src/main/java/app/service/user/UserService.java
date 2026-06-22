@@ -4,7 +4,6 @@ import app.exception.InvalidCredentialsException;
 import app.exception.UserAlreadyExistsException;
 import app.exception.UserInactiveException;
 import app.exception.UserNotFoundException;
-import app.mapper.quest.QuestMapper;
 import app.mapper.user.UserMapper;
 import app.model.dto.user.LoginDTO;
 import app.model.dto.user.RegisterDTO;
@@ -39,8 +38,7 @@ public class UserService {
 
     public UserDTO login(LoginDTO loginData){
         User user = userRepository.findByUsername(loginData.getUsername())
-                .orElseThrow(() ->
-                        new InvalidCredentialsException("Invalid username or password"));
+                .orElseThrow(() -> new InvalidCredentialsException("Invalid username or password"));
 
         if (!user.isActive()) {
             throw new UserInactiveException("User account is inactive");
@@ -66,25 +64,18 @@ public class UserService {
     public UserDTO register(RegisterDTO registerData) {
 
         if (userRepository.existsByUsername(registerData.getUsername())) {
-            throw new UserAlreadyExistsException(
-                    "Username already exists."
-            );
+            throw new UserAlreadyExistsException("Username already exists.");
         }
-
 
         User user = User.builder()
                 .username(registerData.getUsername())
                 .password(passwordEncoder.encode(registerData.getPassword()))
                 .email(registerData.getEmail())
-                .profilePicture(
-                        getDefaultProfilePicture(registerData.getHeroClass())
-                )
+                .profilePicture(getDefaultProfilePicture(registerData.getHeroClass()))
                 .role(Role.PLAYER)
                 .server(registerData.getServer())
                 .isActive(true)
                 .build();
-
-
 
         Hero hero = Hero.builder()
                 .roleplayName(registerData.getRoleplayName())
@@ -105,7 +96,7 @@ public class UserService {
 
 
     public UserDTO getById(UUID id) {
-        User user = userRepository.findById(id).orElseThrow(() -> new UserNotFoundException("User doesn't exist."));
+        User user = userRepository.findById(id).orElseThrow(() -> new UserNotFoundException("User doesn't exist"));
         return UserMapper.toUserDTO(user);
     }
 
@@ -114,7 +105,7 @@ public class UserService {
     }
 
     public void switchRole(UUID id) {
-        User user = userRepository.findById(id).orElseThrow(() -> new UserNotFoundException("User doesn't exist."));
+        User user = userRepository.findById(id).orElseThrow(() -> new UserNotFoundException("User doesn't exist"));
         if (user.getRole() == Role.PLAYER) {
             user.setRole(Role.ADMIN);
         } else {
@@ -124,7 +115,7 @@ public class UserService {
     }
 
     public void switchStatus(UUID id) {
-        User user = userRepository.findById(id).orElseThrow(() -> new UserNotFoundException("User doesn't exist."));
+        User user = userRepository.findById(id).orElseThrow(() -> new UserNotFoundException("User doesn't exist"));
         user.setActive(!user.isActive());
         userRepository.save(user);
     }

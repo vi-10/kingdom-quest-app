@@ -1,6 +1,7 @@
 package app.web.quest;
 
 import app.model.dto.hero.HeroDTO;
+import app.model.dto.quest.CreateQuestDTO;
 import app.model.dto.quest.QuestDTO;
 import app.model.dto.quest.QuestResultDTO;
 import app.model.dto.user.UserDTO;
@@ -61,6 +62,16 @@ public class QuestController {
 
         ModelAndView modelAndView = new ModelAndView("quest-result");
         modelAndView.addObject("result", result);
+
+        return modelAndView;
+    }
+
+    @GetMapping("/admin/quests/create")
+    public ModelAndView getCreateQuestPage() {
+
+        ModelAndView modelAndView = new ModelAndView("create-quest");
+        CreateQuestDTO questData = CreateQuestDTO.builder().build();
+        modelAndView.addObject("questData", questData);
 
         return modelAndView;
     }

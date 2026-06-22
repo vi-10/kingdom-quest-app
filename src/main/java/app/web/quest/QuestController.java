@@ -14,10 +14,7 @@ import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
 import java.util.List;
@@ -103,5 +100,23 @@ public class QuestController {
         modelAndView.addObject("quests", questService.getAllQuests());
 
         return modelAndView;
+    }
+
+    @PutMapping("/admin/quests/edit")
+    public ModelAndView editQuest(
+            @Valid @ModelAttribute("questData") EditQuestDTO questData,
+            BindingResult bindingResult) {
+
+        if (bindingResult.hasErrors()) {
+
+            ModelAndView modelAndView = new ModelAndView("edit-quest");
+            modelAndView.addObject("quests", questService.getAllQuests());
+
+            return modelAndView;
+        }
+
+        questService.editQuest(questData);
+
+        return new ModelAndView("redirect:/admin/quests");
     }
 }

@@ -21,7 +21,7 @@
 
     <form th:action="@{/admin/quests/edit}"
           th:object="${questData}"
-          method="post"
+          th:method="PUT"
           class="quest-form">
 
         <div class="form-group">

@@ -5,6 +5,7 @@ import app.exception.QuestNotFoundException;
 import app.exception.UserNotFoundException;
 import app.mapper.quest.QuestMapper;
 import app.model.dto.quest.CreateQuestDTO;
+import app.model.dto.quest.EditQuestDTO;
 import app.model.dto.quest.QuestDTO;
 import app.model.dto.quest.QuestResultDTO;
 import app.model.entity.hero.Hero;
@@ -19,6 +20,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 @Service
@@ -92,4 +94,27 @@ public class QuestService {
 
         questRepository.save(quest);
     }
+
+    public void editQuest(EditQuestDTO questData) {
+        Quest quest = questRepository.findById(questData.getId())
+                .orElseThrow(() -> new QuestNotFoundException("Quest not found"));
+
+        Optional<Quest> existingQuest = questRepository.findByTitle(questData.getTitle());
+
+        if (existingQuest.isPresent() && !existingQuest.get().getId().equals(questData.getId())) {
+            throw new QuestAlreadyExistsException("A quest with this name already exists"
+            );
+        }
+
+        quest.setTitle(questData.getTitle());
+        quest.setDescription(questData.getDescription());
+        quest.setRequiredLevel(questData.getRequiredLevel());
+        quest.setRewardXp(questData.getRewardXp());
+        quest.setRewardGold(questData.getRewardGold());
+        quest.setQuestType(questData.getQuestType());
+
+        questRepository.save(quest);
+    }
+
+
 }

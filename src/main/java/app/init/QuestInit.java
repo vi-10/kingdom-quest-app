@@ -100,6 +100,7 @@ public class QuestInit implements CommandLineRunner {
                 .build();
 
         questRepository.saveAll(List.of(q1, q2, q3, q4, q5, q6, q7, q8));
+        log.info("Default quests created");
 
     }
 }

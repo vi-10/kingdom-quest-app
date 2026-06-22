@@ -84,5 +84,6 @@ public class itemInit implements CommandLineRunner {
                 .build();
 
         itemRepository.saveAll(List.of(i1, i2, i3, i4, i5, i6, i7, i8));
+        log.info("Default items created");
     }
 }

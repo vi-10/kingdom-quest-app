@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Create Quest</title>
+    <link rel="stylesheet" href="/css/quest.css">
+</head>
+<body>
+
+<div class="container">
+
+    <div class="header">
+
+        <h1>Create Quest</h1>
+
+        <a href="/admin/quests" class="back-btn">
+            Back
+        </a>
+
+    </div>
+
+    <form th:action="@{/admin/quests/create}"
+          th:object="${questData}"
+          method="post"
+          class="quest-form">
+
+        <div class="form-group">
+
+            <label for="name">Quest Name</label>
+
+            <input type="text"
+                   id="name"
+                   th:field="*{name}">
+
+            <p class="error"
+               th:if="${#fields.hasErrors('name')}"
+               th:errors="*{name}">
+            </p>
+
+        </div>
+
+        <div class="form-group">
+
+            <label for="description">Description</label>
+
+            <textarea id="description"
+                      th:field="*{description}">
+            </textarea>
+
+            <p class="error"
+               th:if="${#fields.hasErrors('description')}"
+               th:errors="*{description}">
+            </p>
+
+        </div>
+
+        <div class="form-group">
+
+            <label for="requiredLevel">Required Level</label>
+
+            <input type="number"
+                   id="requiredLevel"
+                   min="1"
+                   th:field="*{requiredLevel}">
+
+        </div>
+
+        <div class="form-group">
+
+            <label for="rewardXp">Reward XP</label>
+
+            <input type="number"
+                   id="rewardXp"
+                   min="0"
+                   th:field="*{rewardXp}">
+
+        </div>
+
+        <div class="form-group">
+
+            <label for="rewardGold">Reward Gold</label>
+
+            <input type="number"
+                   id="rewardGold"
+                   min="0"
+                   th:field="*{rewardGold}">
+
+        </div>
+
+        <div class="form-group">
+            <label for="heroClass">Quest type:</label>
+            <select id="heroClass" th:field="*{questType}">
+                <option value="">Select type</option>
+                <option value="COMBAT">Combat</option>
+                <option value="MAGIC">Magic</option>
+                <option value="STEALTH">Stealth</option>
+                <option value="SUPPORT">Support</option>
+            </select>
+        </div>
+
+        <button type="submit" class="submit-btn">
+            Create Quest
+        </button>
+
+    </form>
+
+</div>
+
+</body>
+</html>

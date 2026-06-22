@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Delete Quest</title>
+    <link rel="stylesheet" href="/css/quest.css">
+</head>
+<body>
+
+<div class="container">
+
+    <div class="header">
+
+        <h1>Delete Quest</h1>
+
+        <a href="/admin/quests" class="back-btn">
+            Back
+        </a>
+
+    </div>
+
+    <form th:action="@{/admin/quests/delete}"
+          method="post"
+          class="quest-form">
+
+        <div class="form-group">
+
+            <label>Select Quest</label>
+
+            <select name="questId">
+
+                <option th:each="quest : ${quests}"
+                        th:value="${quest.id}"
+                        th:text="${quest.name}">
+                </option>
+
+            </select>
+
+        </div>
+
+        <button type="submit"
+                class="submit-btn"
+                style="background-color:#b22222; color:white;">
+            Delete Quest
+        </button>
+
+    </form>
+
+</div>
+
+</body>
+</html>

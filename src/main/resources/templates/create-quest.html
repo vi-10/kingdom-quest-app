@@ -63,6 +63,11 @@
                    min="1"
                    th:field="*{requiredLevel}">
 
+            <p class="error"
+               th:if="${#fields.hasErrors('requiredLevel')}"
+               th:errors="*{requiredLevel}">
+            </p>
+
         </div>
 
         <div class="form-group">
@@ -73,6 +78,11 @@
                    id="rewardXp"
                    min="0"
                    th:field="*{rewardXp}">
+
+            <p class="error"
+               th:if="${#fields.hasErrors('rewardXp')}"
+               th:errors="*{rewardXp}">
+            </p>
 
         </div>
 
@@ -85,6 +95,11 @@
                    min="0"
                    th:field="*{rewardGold}">
 
+            <p class="error"
+               th:if="${#fields.hasErrors('rewardGold')}"
+               th:errors="*{rewardGold}">
+            </p>
+
         </div>
 
         <div class="form-group">
@@ -96,6 +111,11 @@
                 <option value="STEALTH">Stealth</option>
                 <option value="SUPPORT">Support</option>
             </select>
+
+            <p class="error"
+               th:if="${#fields.hasErrors('questType')}"
+               th:errors="*{questType}">
+            </p>
         </div>
 
         <button type="submit" class="submit-btn">

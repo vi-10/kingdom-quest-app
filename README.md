@@ -200,6 +200,19 @@ Validation errors are displayed in the UI using Thymeleaf.
 
 ---
 
+## Default Admin Account
+
+- Username: admin
+- Password: admin123
+
+---
+
+Database Setup
+
+- Configure your MySQL credentials in application.properties before running the app
+
+---
+
 ## Future Improvements
 
 - Quest history tracking 

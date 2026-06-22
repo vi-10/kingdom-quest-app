@@ -47,8 +47,8 @@ public class UserInit implements CommandLineRunner {
         Hero hero = Hero.builder()
                 .roleplayName("The Administrator")
                 .heroClass(HeroClass.WARRIOR)
-                .level(99)
-                .xp(99999)
+                .level(100)
+                .xp(9900)
                 .gold(99999)
                 .user(admin)
                 .build();

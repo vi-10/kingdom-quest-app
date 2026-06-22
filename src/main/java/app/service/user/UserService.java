@@ -21,18 +21,19 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 
 @Service
 @Transactional
 public class UserService {
     private UserRepository userRepository;
-    private PasswordEncoder passwordEncoder;;
+    private HeroRepository heroRepository;
+    private PasswordEncoder passwordEncoder;
 
     @Autowired
-    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder) {
+    public UserService(UserRepository userRepository, HeroRepository heroRepository, PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
+        this.heroRepository = heroRepository;
         this.passwordEncoder = passwordEncoder;
     }
 
@@ -97,6 +98,7 @@ public class UserService {
         user.setHero(hero);
 
         userRepository.save(user);
+        heroRepository.save(hero);
 
         return UserMapper.toUserDTO(user);
     }

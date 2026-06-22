@@ -32,7 +32,7 @@
 
                 <option th:each="quest : ${quests}"
                         th:value="${quest.id}"
-                        th:text="${quest.name}">
+                        th:text="${quest.title}">
                 </option>
 
             </select>
@@ -41,14 +41,14 @@
 
         <div class="form-group">
 
-            <label>Quest Name</label>
+            <label>Quest title</label>
 
             <input type="text"
-                   th:field="*{name}">
+                   th:field="*{title}">
 
             <p class="error"
-               th:if="${#fields.hasErrors('name')}"
-               th:errors="*{name}">
+               th:if="${#fields.hasErrors('title')}"
+               th:errors="*{title}">
             </p>
 
         </div>
@@ -60,6 +60,11 @@
             <textarea th:field="*{description}">
             </textarea>
 
+            <p class="error"
+               th:if="${#fields.hasErrors('description')}"
+               th:errors="*{description}">
+            </p>
+
         </div>
 
         <div class="form-group">
@@ -69,6 +74,11 @@
             <input type="number"
                    min="1"
                    th:field="*{requiredLevel}">
+
+            <p class="error"
+               th:if="${#fields.hasErrors('requiredLevel')}"
+               th:errors="*{requiredLevel}">
+            </p>
         </div>
 
         <div class="form-group">
@@ -78,6 +88,11 @@
             <input type="number"
                    min="0"
                    th:field="*{rewardXp}">
+
+            <p class="error"
+               th:if="${#fields.hasErrors('rewardXp')}"
+               th:errors="*{rewardXp}">
+            </p>
         </div>
 
         <div class="form-group">
@@ -87,17 +102,27 @@
             <input type="number"
                    min="0"
                    th:field="*{rewardGold}">
+
+            <p class="error"
+               th:if="${#fields.hasErrors('rewardGold')}"
+               th:errors="*{rewardGold}">
+            </p>
         </div>
 
         <div class="form-group">
-            <label for="heroClass">Quest type:</label>
-            <select id="heroClass" th:field="*{questType}">
+            <label for="questType">Quest type:</label>
+            <select id="questType" th:field="*{questType}">
                 <option value="">Select type</option>
                 <option value="COMBAT">Combat</option>
                 <option value="MAGIC">Magic</option>
                 <option value="STEALTH">Stealth</option>
                 <option value="SUPPORT">Support</option>
             </select>
+
+            <p class="error"
+               th:if="${#fields.hasErrors('questType')}"
+               th:errors="*{questType}">
+            </p>
         </div>
 
         <button type="submit"

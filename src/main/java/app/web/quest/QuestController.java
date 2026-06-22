@@ -2,6 +2,7 @@ package app.web.quest;
 
 import app.model.dto.hero.HeroDTO;
 import app.model.dto.quest.CreateQuestDTO;
+import app.model.dto.quest.EditQuestDTO;
 import app.model.dto.quest.QuestDTO;
 import app.model.dto.quest.QuestResultDTO;
 import app.model.dto.user.UserDTO;
@@ -91,5 +92,16 @@ public class QuestController {
         questService.createQuest(questData);
 
         return new ModelAndView("redirect:/admin/quests");
+    }
+
+    @GetMapping("/admin/quests/edit")
+    public ModelAndView getEditQuestPage() {
+
+        ModelAndView modelAndView = new ModelAndView("edit-quest");
+        EditQuestDTO questData = EditQuestDTO.builder().build();
+        modelAndView.addObject("questData", questData);
+        modelAndView.addObject("quests", questService.getAllQuests());
+
+        return modelAndView;
     }
 }

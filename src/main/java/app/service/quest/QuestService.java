@@ -1,8 +1,10 @@
 package app.service.quest;
 
+import app.exception.QuestAlreadyExistsException;
 import app.exception.QuestNotFoundException;
 import app.exception.UserNotFoundException;
 import app.mapper.quest.QuestMapper;
+import app.model.dto.quest.CreateQuestDTO;
 import app.model.dto.quest.QuestDTO;
 import app.model.dto.quest.QuestResultDTO;
 import app.model.entity.hero.Hero;
@@ -12,6 +14,7 @@ import app.model.entity.quest.QuestType;
 import app.repository.hero.HeroRepository;
 import app.repository.quest.QuestRepository;
 import jakarta.transaction.Transactional;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -69,5 +72,24 @@ public class QuestService {
                 .message("You earned " + quest.getRewardXp() + " XP and " +
                         quest.getRewardGold() + " gold!")
                 .build();
+    }
+
+    public void createQuest(CreateQuestDTO questData) {
+        if (questRepository.existsByTitle(questData.getTitle())) {
+            throw new QuestAlreadyExistsException(
+                    "A quest with this title already exists"
+            );
+        }
+
+        Quest quest = Quest.builder()
+                .title(questData.getTitle())
+                .description(questData.getDescription())
+                .requiredLevel(questData.getRequiredLevel())
+                .rewardXp(questData.getRewardXp())
+                .rewardGold(questData.getRewardGold())
+                .questType(questData.getQuestType())
+                .build();
+
+        questRepository.save(quest);
     }
 }

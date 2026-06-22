@@ -9,9 +9,12 @@ import app.service.hero.HeroService;
 import app.service.quest.QuestService;
 import app.service.user.UserService;
 import jakarta.servlet.http.HttpSession;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.servlet.ModelAndView;
@@ -74,5 +77,19 @@ public class QuestController {
         modelAndView.addObject("questData", questData);
 
         return modelAndView;
+    }
+
+    @PostMapping("/admin/quests/create")
+    public ModelAndView createQuest(
+            @Valid @ModelAttribute("questData") CreateQuestDTO questData,
+            BindingResult bindingResult) {
+
+        if (bindingResult.hasErrors()) {
+            return new ModelAndView("create-quest");
+        }
+
+        questService.createQuest(questData);
+
+        return new ModelAndView("redirect:/admin/quests");
     }
 }

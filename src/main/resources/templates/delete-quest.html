@@ -19,7 +19,14 @@
 
     </div>
 
-    <form th:action="@{/admin/quests/delete}"
+    <div th:if="${noQuests}" class="quest-form">
+        <p style="color: #cccccc; text-align: center;">
+            No quests available to delete.
+        </p>
+    </div>
+
+    <form  th:if="${!noQuests}"
+            th:action="@{/admin/quests/delete}"
           th:method="DELETE"
           class="quest-form">
 

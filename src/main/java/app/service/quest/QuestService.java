@@ -15,7 +15,6 @@ import app.model.entity.quest.QuestType;
 import app.repository.hero.HeroRepository;
 import app.repository.quest.QuestRepository;
 import jakarta.transaction.Transactional;
-import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -26,8 +25,8 @@ import java.util.UUID;
 @Service
 @Transactional
 public class QuestService {
-    private QuestRepository questRepository;
-    private HeroRepository heroRepository;
+    private final QuestRepository questRepository;
+    private final HeroRepository heroRepository;
 
     @Autowired
     public QuestService(QuestRepository questRepository, HeroRepository heroRepository) {
@@ -119,7 +118,7 @@ public class QuestService {
 
     public void deleteQuest(UUID questId) {
         if (!questRepository.existsById(questId)) {
-            throw new QuestNotFoundException("Quest not found.");
+            throw new QuestNotFoundException("Quest not found");
         }
 
         questRepository.deleteById(questId);

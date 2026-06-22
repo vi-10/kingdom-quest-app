@@ -123,7 +123,9 @@ public class QuestController {
     public ModelAndView getDeleteQuestPage() {
 
         ModelAndView modelAndView = new ModelAndView("delete-quest");
-        modelAndView.addObject("quests", questService.getAllQuests());
+        List<QuestDTO> quests = questService.getAllQuests();
+        modelAndView.addObject("quests", quests);
+        modelAndView.addObject("noQuests", quests.isEmpty());
 
         return modelAndView;
     }

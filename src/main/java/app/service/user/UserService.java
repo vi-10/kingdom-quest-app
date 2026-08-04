@@ -1,11 +1,8 @@
 package app.service.user;
 
-import app.exception.InvalidCredentialsException;
 import app.exception.UserAlreadyExistsException;
-import app.exception.UserInactiveException;
 import app.exception.UserNotFoundException;
 import app.mapper.user.UserMapper;
-import app.model.dto.user.LoginDTO;
 import app.model.dto.user.RegisterDTO;
 import app.model.dto.user.UserDTO;
 import app.model.entity.hero.Hero;
@@ -14,8 +11,12 @@ import app.model.entity.user.Role;
 import app.model.entity.user.User;
 import app.repository.hero.HeroRepository;
 import app.repository.user.UserRepository;
+import app.security.AuthenticationUserDetails;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -24,7 +25,7 @@ import java.util.UUID;
 
 @Service
 @Transactional
-public class UserService {
+public class UserService implements UserDetailsService {
     private UserRepository userRepository;
     private HeroRepository heroRepository;
     private PasswordEncoder passwordEncoder;
@@ -34,21 +35,6 @@ public class UserService {
         this.userRepository = userRepository;
         this.heroRepository = heroRepository;
         this.passwordEncoder = passwordEncoder;
-    }
-
-    public UserDTO login(LoginDTO loginData){
-        User user = userRepository.findByUsername(loginData.getUsername())
-                .orElseThrow(() -> new InvalidCredentialsException("Invalid username or password"));
-
-        if (!user.isActive()) {
-            throw new UserInactiveException("User account is inactive");
-        }
-
-        if (!passwordEncoder.matches(loginData.getPassword(), user.getPassword())) {
-            throw new InvalidCredentialsException("Invalid username or password");
-        }
-
-        return UserMapper.toUserDTO(user);
     }
 
     private String getDefaultProfilePicture(HeroClass heroClass) {
@@ -118,5 +104,19 @@ public class UserService {
         User user = userRepository.findById(id).orElseThrow(() -> new UserNotFoundException("User doesn't exist"));
         user.setActive(!user.isActive());
         userRepository.save(user);
+    }
+
+    @Override
+    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+
+        User user = userRepository.findByUsername(username).orElseThrow(() -> new UsernameNotFoundException(username));
+
+        return AuthenticationUserDetails.builder()
+                .id(user.getId())
+                .username(user.getUsername())
+                .password(user.getPassword())
+                .role(user.getRole())
+                .isActive(user.isActive())
+                .build();
     }
 }

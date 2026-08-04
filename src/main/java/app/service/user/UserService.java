@@ -72,7 +72,7 @@ public class UserService {
                 .password(passwordEncoder.encode(registerData.getPassword()))
                 .email(registerData.getEmail())
                 .profilePicture(getDefaultProfilePicture(registerData.getHeroClass()))
-                .role(Role.PLAYER)
+                .role(Role.USER)
                 .server(registerData.getServer())
                 .isActive(true)
                 .build();
@@ -106,10 +106,10 @@ public class UserService {
 
     public void switchRole(UUID id) {
         User user = userRepository.findById(id).orElseThrow(() -> new UserNotFoundException("User doesn't exist"));
-        if (user.getRole() == Role.PLAYER) {
+        if (user.getRole() == Role.USER) {
             user.setRole(Role.ADMIN);
         } else {
-            user.setRole(Role.PLAYER);
+            user.setRole(Role.USER);
         }
         userRepository.save(user);
     }

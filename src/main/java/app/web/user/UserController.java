@@ -1,14 +1,14 @@
 package app.web.user;
 
 import app.model.dto.hero.HeroDTO;
-import app.model.dto.user.LoginDTO;
 import app.model.dto.user.RegisterDTO;
 import app.model.dto.user.UserDTO;
+import app.security.AuthenticationUserDetails;
 import app.service.hero.HeroService;
 import app.service.user.UserService;
-import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
@@ -35,10 +35,9 @@ public class UserController {
 
     @GetMapping("/login")
     public ModelAndView getLogin(){
-        LoginDTO login = LoginDTO.builder().build();
-        ModelAndView modelAndView = new ModelAndView();
-        modelAndView.setViewName("login");
-        modelAndView.addObject("loginData", login);
+
+        ModelAndView modelAndView = new ModelAndView("login");
+
         return modelAndView;
     }
 
@@ -49,22 +48,6 @@ public class UserController {
         modelAndView.setViewName("register");
         modelAndView.addObject("registerData", register);
         return modelAndView;
-    }
-
-    @PostMapping("/login")
-    public ModelAndView login(@Valid @ModelAttribute("loginData") LoginDTO loginData,
-                              BindingResult bindingResult,
-                              HttpSession session) {
-
-        if (bindingResult.hasErrors()) {
-            return new ModelAndView("login");
-        }
-
-        UserDTO user = userService.login(loginData);
-
-        session.setAttribute("userId", user.getId());
-
-        return new ModelAndView("redirect:/dashboard");
     }
 
     @PostMapping("/register")
@@ -81,9 +64,9 @@ public class UserController {
     }
 
     @GetMapping("/dashboard")
-    public ModelAndView getDashboard(HttpSession httpSession) {
+    public ModelAndView getDashboard(@AuthenticationPrincipal AuthenticationUserDetails principal) {
 
-        UUID userId = (UUID) httpSession.getAttribute("userId");
+        UUID userId = principal.getId();
 
         UserDTO user = userService.getById(userId);
         HeroDTO hero = heroService.getByUserId(userId);
@@ -93,14 +76,6 @@ public class UserController {
         modelAndView.addObject("hero", hero);
 
         return modelAndView;
-    }
-
-    @GetMapping("/logout")
-    public String logout(HttpSession session) {
-
-        session.invalidate();
-
-        return "redirect:/";
     }
 
     @GetMapping("/admin/users")

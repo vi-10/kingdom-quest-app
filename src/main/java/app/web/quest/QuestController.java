@@ -5,11 +5,12 @@ import app.model.dto.quest.CreateQuestDTO;
 import app.model.dto.quest.EditQuestDTO;
 import app.model.dto.quest.QuestDTO;
 import app.model.dto.quest.QuestResultDTO;
+import app.security.AuthenticationUserDetails;
 import app.service.hero.HeroService;
 import app.service.quest.QuestService;
-import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
@@ -30,9 +31,9 @@ public class QuestController {
     }
 
     @GetMapping("/quests")
-    public ModelAndView getQuests(HttpSession session){
+    public ModelAndView getQuests(@AuthenticationPrincipal AuthenticationUserDetails principal){
 
-        UUID userId = (UUID) session.getAttribute("userId");
+        UUID userId = principal.getId();
 
         HeroDTO hero = heroService.getByUserId(userId);
 
@@ -47,9 +48,9 @@ public class QuestController {
 
     @PostMapping("/quests/{id}/complete")
     public ModelAndView completeQuest(@PathVariable UUID id,
-                                      HttpSession session) {
+                                      @AuthenticationPrincipal AuthenticationUserDetails principal) {
 
-        UUID userId = (UUID) session.getAttribute("userId");
+        UUID userId = principal.getId();
 
         QuestResultDTO result = questService.completeQuest(id, userId);
 

@@ -1,5 +1,6 @@
 package app.config;
 
+import app.security.CustomAuthenticationFailureHandler;
 import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -10,6 +11,12 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 @Configuration
 public class WebMvcConfiguration implements WebMvcConfigurer {
+
+    private CustomAuthenticationFailureHandler customAuthenticationFailureHandler;
+
+    public WebMvcConfiguration(CustomAuthenticationFailureHandler customAuthenticationFailureHandler) {
+        this.customAuthenticationFailureHandler = customAuthenticationFailureHandler;
+    }
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception{
@@ -27,7 +34,7 @@ public class WebMvcConfiguration implements WebMvcConfigurer {
                 .formLogin(form -> form
                         .loginPage("/login")
                         .defaultSuccessUrl("/dashboard", true)
-                        .failureUrl("/login?error")
+                        .failureHandler(customAuthenticationFailureHandler)
                         .permitAll())
                 .logout(logout -> logout
                         .logoutRequestMatcher(new AntPathRequestMatcher("/logout", "GET"))

@@ -3,10 +3,11 @@ package app.web.item;
 import app.model.dto.hero.HeroDTO;
 import app.model.dto.item.ForgeResultDTO;
 import app.model.dto.item.ItemDTO;
+import app.security.AuthenticationUserDetails;
 import app.service.hero.HeroService;
 import app.service.item.ItemService;
-import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -30,9 +31,9 @@ public class ItemController {
     }
 
     @GetMapping("/forge")
-    public ModelAndView getForgePage(HttpSession session) {
+    public ModelAndView getForgePage(@AuthenticationPrincipal AuthenticationUserDetails principal) {
 
-        UUID userId = (UUID) session.getAttribute("userId");
+        UUID userId = principal.getId();
 
         HeroDTO hero = heroService.getByUserId(userId);
 
@@ -46,9 +47,10 @@ public class ItemController {
     }
 
     @PostMapping("/{id}/forge")
-    public ModelAndView forgeItem(@PathVariable UUID id, HttpSession session) {
+    public ModelAndView forgeItem(@PathVariable UUID id,
+                                  @AuthenticationPrincipal AuthenticationUserDetails principal) {
 
-        UUID userId = (UUID) session.getAttribute("userId");
+        UUID userId = principal.getId();
 
         ForgeResultDTO forgeResult = itemService.forgeItem(id, userId);
 
@@ -65,9 +67,9 @@ public class ItemController {
     }
 
     @GetMapping("/inventory")
-    public ModelAndView getInventory(HttpSession session) {
+    public ModelAndView getInventory(@AuthenticationPrincipal AuthenticationUserDetails principal) {
 
-        UUID userId = (UUID) session.getAttribute("userId");
+        UUID userId = principal.getId();
 
         List<ItemDTO> items = itemService.getInventory(userId);
 

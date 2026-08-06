@@ -1,0 +1,214 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+
+body {
+    font-family: Georgia, serif;
+
+    background:
+            linear-gradient(
+                    rgba(20,20,20,0.7),
+                    rgba(20,20,20,0.7)
+            ),
+            url("/images/background.jpg");
+
+    background-size: cover;
+    background-position: center;
+
+    color: white;
+
+    min-height: 100vh;
+}
+
+
+.container {
+
+    max-width: 1200px;
+
+    margin: 0 auto;
+
+    padding: 40px;
+
+}
+
+
+.header {
+
+    display: flex;
+
+    justify-content: space-between;
+
+    align-items: center;
+
+    margin-bottom: 40px;
+
+}
+
+
+.header h1 {
+
+    color: #d4af37;
+
+    font-size: 3rem;
+
+}
+
+
+.event-subtitle {
+
+    color: #cccccc;
+
+    margin-top: 10px;
+
+}
+
+
+.back-btn {
+
+    text-decoration: none;
+
+    color: white;
+
+    background-color: #8b5e34;
+
+    padding: 12px 20px;
+
+    border-radius: 8px;
+
+    font-weight: bold;
+
+}
+
+
+.back-btn:hover {
+
+    background-color: #a97142;
+
+}
+
+
+.event-card {
+
+    position: relative;
+
+    max-width: 700px;
+
+    margin: 50px auto;
+
+    background-color: #252525;
+
+    border-radius: 15px;
+
+    padding: 35px;
+
+    border-top: 6px solid #d4af37;
+
+}
+
+
+.active-badge {
+
+    position: absolute;
+
+    top: -18px;
+
+    right: 25px;
+
+    background-color: #d4af37;
+
+    color: black;
+
+    padding: 8px 18px;
+
+    border-radius: 20px;
+
+    font-weight: bold;
+
+}
+
+
+.event-card h2 {
+
+    color: #d4af37;
+
+    font-size: 2.2rem;
+
+    margin-bottom: 20px;
+
+}
+
+
+.description {
+
+    color: #dddddd;
+
+    font-size: 1.1rem;
+
+    margin-bottom: 30px;
+
+}
+
+
+.event-details {
+
+    background-color: #1b1b1b;
+
+    border-radius: 10px;
+
+    padding: 20px;
+
+}
+
+
+.event-details p {
+
+    display: flex;
+
+    justify-content: space-between;
+
+    margin-bottom: 12px;
+
+}
+
+
+.event-details span:first-child {
+
+    color: #cccccc;
+
+}
+
+
+.event-details span:last-child {
+
+    color: #d4af37;
+
+    font-weight: bold;
+
+}
+
+
+.no-event {
+
+    background-color: #252525;
+
+    border-radius: 12px;
+
+    padding: 40px;
+
+    text-align: center;
+
+    border-top: 5px solid #d4af37;
+
+}
+
+
+.no-event h2 {
+
+    color: #d4af37;
+
+    margin-bottom: 15px;
+
+}

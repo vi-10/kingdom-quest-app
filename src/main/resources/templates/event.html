@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Kingdom Events</title>
+
+    <link rel="stylesheet" href="/css/event.css">
+</head>
+
+<body>
+
+<div class="container">
+
+    <div class="header">
+
+        <div>
+            <h1>Kingdom Events</h1>
+            <p class="event-subtitle">
+                Current events affecting the kingdom
+            </p>
+        </div>
+
+        <a href="/dashboard" class="back-btn">
+            Back
+        </a>
+
+    </div>
+
+
+    <div th:if="${event == null}" class="no-event">
+
+        <h2>No active events</h2>
+
+        <p>
+            There are currently no special events happening in the kingdom.
+        </p>
+
+    </div>
+
+
+    <div th:if="${event != null}" class="event-card">
+
+        <div class="active-badge">
+            ACTIVE EVENT
+        </div>
+
+
+        <h2 th:text="${event.title}">
+            Event title
+        </h2>
+
+
+        <p class="description"
+           th:text="${event.description}">
+            Event description
+        </p>
+
+
+        <div class="event-details">
+
+            <p>
+                <span>Quest type:</span>
+                <span th:text="${event.affectedQuestType}">
+                    COMBAT
+                </span>
+            </p>
+
+
+            <p>
+                <span>Bonus XP:</span>
+                <span th:text="${event.bonusXp}">
+                    50
+                </span>
+            </p>
+
+
+            <p>
+                <span>Bonus Gold:</span>
+                <span th:text="${event.bonusGold}">
+                    20
+                </span>
+            </p>
+
+
+            <p>
+                <span>Starts:</span>
+                <span th:text="${event.start}">
+                    2026-01-01
+                </span>
+            </p>
+
+
+            <p>
+                <span>Ends:</span>
+                <span th:text="${event.end}">
+                    2026-01-07
+                </span>
+            </p>
+
+        </div>
+
+    </div>
+
+
+</div>
+
+</body>
+</html>

@@ -4,6 +4,7 @@ import app.exception.QuestAlreadyExistsException;
 import app.exception.QuestNotFoundException;
 import app.exception.UserNotFoundException;
 import app.mapper.quest.QuestMapper;
+import app.model.dto.event.ActiveEventResponse;
 import app.model.dto.quest.CreateQuestDTO;
 import app.model.dto.quest.EditQuestDTO;
 import app.model.dto.quest.QuestDTO;
@@ -14,7 +15,9 @@ import app.model.entity.quest.Quest;
 import app.model.entity.quest.QuestType;
 import app.repository.hero.HeroRepository;
 import app.repository.quest.QuestRepository;
+import app.service.event.EventService;
 import jakarta.transaction.Transactional;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -22,16 +25,19 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
+@Slf4j
 @Service
 @Transactional
 public class QuestService {
     private final QuestRepository questRepository;
     private final HeroRepository heroRepository;
+    private final EventService eventService;
 
     @Autowired
-    public QuestService(QuestRepository questRepository, HeroRepository heroRepository) {
+    public QuestService(QuestRepository questRepository, HeroRepository heroRepository, EventService eventService) {
         this.questRepository = questRepository;
         this.heroRepository = heroRepository;
+        this.eventService = eventService;
     }
 
     public List<QuestDTO> getAllQuests() {
@@ -66,11 +72,34 @@ public class QuestService {
         hero.setLevel(hero.getXp() / 100 + 1);
         hero.setGold(hero.getGold() + quest.getRewardGold());
 
+        QuestResultDTO result = QuestResultDTO.builder()
+                .success(true)
+                .message("You earned " + quest.getRewardXp() + " XP and " + quest.getRewardGold() + " gold!\n").build();
+
+        log.info("User {} completed quest {}", userId, quest.getTitle());
+
+        ActiveEventResponse event = eventService.getActiveEvent();
+
+        if(event != null && event.getAffectedQuestType() == quest.getQuestType()){
+
+            hero.setXp(hero.getXp() + event.getBonusXp());
+            hero.setGold(hero.getGold() + event.getBonusGold());
+
+            result.setMessage(result.getMessage() + String.format(
+                            "Kingdom Event: %s\n" +
+                            "Bonus: +%d XP and +%d Gold\n" +
+                            "Total: %d XP and %d Gold\n",
+                            event.getTitle(), event.getBonusXp(), event.getBonusGold(),
+                            quest.getRewardXp() + event.getBonusXp(),
+                            quest.getRewardGold() + event.getBonusGold()));
+
+            log.info("Kingdom event {} applied bonus rewards to quest {}",
+                    event.getTitle(), quest.getTitle());
+        }
+
         heroRepository.save(hero);
 
-        return QuestResultDTO.builder()
-                .success(true)
-                .message("You earned " + quest.getRewardXp() + " XP and " + quest.getRewardGold() + " gold!").build();
+        return result;
     }
 
     public void createQuest(CreateQuestDTO questData) {

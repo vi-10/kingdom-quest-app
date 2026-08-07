@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Create Event</title>
+    <link rel="stylesheet" href="/css/admin-action.css">
+</head>
+<body>
+
+<div class="container">
+
+    <div class="header">
+
+        <h1>Create Event</h1>
+
+        <a href="/admin/events" class="back-btn">
+            Back
+        </a>
+
+    </div>
+
+    <form th:action="@{/admin/events/create}"
+          th:object="${eventData}"
+          method="post"
+          class="quest-form">
+
+        <div class="form-group">
+
+            <label for="title">Event title</label>
+
+            <input type="text"
+                   id="title"
+                   th:field="*{title}">
+
+            <p class="error"
+               th:if="${#fields.hasErrors('title')}"
+               th:errors="*{title}">
+            </p>
+
+        </div>
+
+
+        <div class="form-group">
+
+            <label for="description">Description</label>
+
+            <textarea id="description"
+                      th:field="*{description}">
+        </textarea>
+
+            <p class="error"
+               th:if="${#fields.hasErrors('description')}"
+               th:errors="*{description}">
+            </p>
+
+        </div>
+
+
+        <div class="form-group">
+
+            <label for="questType">Affected Quest Type</label>
+
+            <select id="questType"
+                    th:field="*{affectedQuestType}">
+
+                <option value="">Select quest type</option>
+
+                <option value="COMBAT">Combat</option>
+                <option value="MAGIC">Magic</option>
+                <option value="STEALTH">Stealth</option>
+                <option value="SUPPORT">Support</option>
+
+            </select>
+
+            <p class="error"
+               th:if="${#fields.hasErrors('affectedQuestType')}"
+               th:errors="*{affectedQuestType}">
+            </p>
+
+        </div>
+
+
+        <div class="form-group">
+
+            <label for="bonusXp">Bonus XP</label>
+
+            <input type="number"
+                   id="bonusXp"
+                   min="0"
+                   th:field="*{bonusXp}">
+
+            <p class="error"
+               th:if="${#fields.hasErrors('bonusXp')}"
+               th:errors="*{bonusXp}">
+            </p>
+
+        </div>
+
+
+        <div class="form-group">
+
+            <label for="bonusGold">Bonus Gold</label>
+
+            <input type="number"
+                   id="bonusGold"
+                   min="0"
+                   th:field="*{bonusGold}">
+
+            <p class="error"
+               th:if="${#fields.hasErrors('bonusGold')}"
+               th:errors="*{bonusGold}">
+            </p>
+
+        </div>
+
+
+        <div class="form-group">
+
+            <label for="start">Start date and time</label>
+
+            <input type="datetime-local"
+                   id="start"
+                   th:field="*{start}">
+
+            <p class="error"
+               th:if="${#fields.hasErrors('start')}"
+               th:errors="*{start}">
+            </p>
+
+        </div>
+
+
+        <div class="form-group">
+
+            <label for="end">End date and time</label>
+
+            <input type="datetime-local"
+                   id="end"
+                   th:field="*{end}">
+
+            <p class="error"
+               th:if="${#fields.hasErrors('end')}"
+               th:errors="*{end}">
+            </p>
+
+        </div>
+
+
+        <button type="submit" class="submit-btn">
+            Create Event
+        </button>
+
+    </form>
+    ```
+
+</div>
+
+</body>
+</html>

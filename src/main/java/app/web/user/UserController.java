@@ -106,4 +106,9 @@ public class UserController {
         return new ModelAndView("quests-administration");
     }
 
+    @GetMapping("/admin/events")
+    public ModelAndView getEventAdminPage(){
+        return new ModelAndView("events-administration");
+    }
+
 }

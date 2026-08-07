@@ -2,15 +2,14 @@ package app.web.event;
 
 import app.model.dto.event.ActiveEventResponse;
 import app.model.dto.event.CreateEventRequest;
+import app.model.dto.event.EditEventRequest;
 import app.model.dto.quest.CreateQuestDTO;
+import app.model.dto.quest.EditQuestDTO;
 import app.service.event.EventService;
 import jakarta.validation.Valid;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
 import java.util.Objects;
@@ -43,17 +42,46 @@ public class EventController {
     }
 
     @PostMapping("/admin/events/create")
-    public String createEvent(
+    public ModelAndView createEvent(
             @Valid @ModelAttribute("eventData") CreateEventRequest request,
             BindingResult bindingResult) {
 
         if(bindingResult.hasErrors()) {
-            return "create-event";
+            return new ModelAndView("create-event");
         }
 
         eventService.createEvent(request);
 
-        return "redirect:/admin/events";
+        return new ModelAndView("redirect:/admin/events");
+    }
+
+    @GetMapping("/admin/events/edit")
+    public ModelAndView getEditEventPage() {
+
+        ModelAndView modelAndView = new ModelAndView("edit-event");
+        EditEventRequest request = EditEventRequest.builder().build();
+        modelAndView.addObject("eventData", request);
+        modelAndView.addObject("events", eventService.getAllQuests());
+
+        return modelAndView;
+    }
+
+    @PutMapping("/admin/events/edit")
+    public ModelAndView editEvent(
+            @Valid @ModelAttribute("eventData") EditEventRequest request,
+            BindingResult bindingResult) {
+
+        if (bindingResult.hasErrors()) {
+
+            ModelAndView modelAndView = new ModelAndView("edit-event");
+            modelAndView.addObject("events", eventService.getAllQuests());
+
+            return modelAndView;
+        }
+
+        eventService.editEvent(request);
+
+        return new ModelAndView("redirect:/admin/events");
     }
 
 

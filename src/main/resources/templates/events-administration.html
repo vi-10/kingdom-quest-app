@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Event Administration</title>
+    <link rel="stylesheet" href="/css/administration.css">
+</head>
+<body>
+
+<div class="container">
+
+    <div class="header">
+
+        <h1>Event Administration</h1>
+
+        <a href="/dashboard" class="back-btn">
+            Dashboard
+        </a>
+
+    </div>
+
+    <div class="subtitle">
+
+        <p>
+            Create, edit and delete events available in the kingdom.
+        </p>
+
+    </div>
+
+    <div class="actions-container">
+
+        <a href="/admin/events/create"
+           class="action-card">
+
+            <h2>Create Event</h2>
+
+            <p>
+                Add a new kingdom event with special rewards and bonuses.
+            </p>
+
+        </a>
+
+        <a href="/admin/events/edit"
+           class="action-card">
+
+            <h2>Edit Event</h2>
+
+            <p>
+                Modify an existing event.
+            </p>
+
+        </a>
+
+        <a href="/admin/events/delete"
+           class="action-card danger">
+
+            <h2>Delete Event</h2>
+
+            <p>
+                Permanently remove a kingdom event.
+            </p>
+
+        </a>
+
+    </div>
+
+</div>
+
+</body>
+</html>

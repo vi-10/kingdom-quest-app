@@ -61,7 +61,7 @@ public class EventController {
         ModelAndView modelAndView = new ModelAndView("edit-event");
         EditEventRequest request = EditEventRequest.builder().build();
         modelAndView.addObject("eventData", request);
-        modelAndView.addObject("events", eventService.getAllQuests());
+        modelAndView.addObject("events", eventService.getAllEvents());
 
         return modelAndView;
     }
@@ -74,7 +74,7 @@ public class EventController {
         if (bindingResult.hasErrors()) {
 
             ModelAndView modelAndView = new ModelAndView("edit-event");
-            modelAndView.addObject("events", eventService.getAllQuests());
+            modelAndView.addObject("events", eventService.getAllEvents());
 
             return modelAndView;
         }

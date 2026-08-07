@@ -9,6 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.UUID;
 
 
 @FeignClient(name = "event-client", url = "http://localhost:8081/api/v1/event")
@@ -30,4 +31,6 @@ public interface EventClient {
     @GetMapping("/all")
     ResponseEntity<List<EventDTO>> getAllEvents();
 
+    @DeleteMapping("/{eventId}")
+    ResponseEntity<Void> deleteEvent(@PathVariable UUID eventId);
 }

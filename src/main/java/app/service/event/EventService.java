@@ -10,6 +10,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -30,5 +31,9 @@ public class EventService {
 
     public List<EventDTO> getAllEvents() {
         return eventClient.getAllEvents().getBody();
+    }
+
+    public void deleteEvent(UUID eventId) {
+        eventClient.deleteEvent(eventId);
     }
 }

@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Delete Event</title>
+    <link rel="stylesheet" href="/css/admin-action.css">
+</head>
+<body>
+
+<div class="container">
+
+    <div class="header">
+
+        <h1>Delete Event</h1>
+
+        <a href="/admin/events" class="back-btn">
+            Back
+        </a>
+
+    </div>
+
+    <div th:if="${noEvents}" class="quest-form">
+        <p style="color: #cccccc; text-align: center;">
+            No events available to delete.
+        </p>
+    </div>
+
+    <form th:if="${!noEvents}"
+          th:action="@{/admin/events/delete}"
+          th:method="DELETE"
+          class="quest-form">
+
+        <div class="form-group">
+
+            <label>Select Event</label>
+
+            <select name="eventId">
+
+                <option th:each="event : ${events}"
+                        th:value="${event.id}"
+                        th:text="${event.title}">
+                </option>
+
+            </select>
+
+        </div>
+
+        <button type="submit"
+                class="submit-btn"
+                style="background-color:#b22222; color:white;">
+            Delete Event
+        </button>
+
+    </form>
+
+
+</div>
+
+</body>
+</html>

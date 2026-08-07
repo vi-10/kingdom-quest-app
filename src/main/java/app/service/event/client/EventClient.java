@@ -2,6 +2,7 @@ package app.service.event.client;
 
 import app.model.dto.event.ActiveEventResponse;
 import app.model.dto.event.CreateEventRequest;
+import app.model.dto.event.EditEventRequest;
 import jakarta.validation.Valid;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.http.ResponseEntity;
@@ -18,6 +19,11 @@ public interface EventClient {
     @PostMapping
     ResponseEntity<Void> createEvent(
             @RequestBody CreateEventRequest request
+    );
+
+    @PutMapping
+    ResponseEntity<Void> editEvent(
+            @RequestBody EditEventRequest request
     );
 
 }

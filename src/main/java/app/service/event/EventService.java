@@ -2,6 +2,7 @@ package app.service.event;
 
 import app.model.dto.event.ActiveEventResponse;
 import app.model.dto.event.CreateEventRequest;
+import app.model.dto.event.EditEventRequest;
 import app.service.event.client.EventClient;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -19,4 +20,10 @@ public class EventService {
     public void createEvent(CreateEventRequest request){
         eventClient.createEvent(request);
     }
+
+    public void editEvent(EditEventRequest request){
+        eventClient.editEvent(request);
+    }
+
+
 }

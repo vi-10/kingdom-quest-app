@@ -1,6 +1,7 @@
 package app.web.user;
 
 import app.model.dto.hero.HeroDTO;
+import app.model.dto.user.EditProfileRequest;
 import app.model.dto.user.RegisterDTO;
 import app.model.dto.user.UserDTO;
 import app.security.AuthenticationUserDetails;
@@ -109,6 +110,29 @@ public class UserController {
     @GetMapping("/admin/events")
     public ModelAndView getEventAdminPage(){
         return new ModelAndView("events-administration");
+    }
+
+    @GetMapping("/edit")
+    public ModelAndView getEditPage(){
+        EditProfileRequest request = EditProfileRequest.builder().build();
+        ModelAndView modelAndView = new ModelAndView("edit");
+        modelAndView.addObject("editData", request);
+        return modelAndView;
+    }
+
+    @PutMapping("/edit")
+    public ModelAndView editProfile(@Valid @ModelAttribute("editData") EditProfileRequest request,
+                                    BindingResult bindingResult,
+                                    @AuthenticationPrincipal AuthenticationUserDetails principal
+                                     ) {
+
+        if (bindingResult.hasErrors()) {
+            return new ModelAndView("edit");
+        }
+
+        userService.editProfile(principal.getId(), request);
+
+        return new ModelAndView("redirect:/dashboard");
     }
 
 }

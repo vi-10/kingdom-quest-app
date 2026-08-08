@@ -71,7 +71,7 @@ public class ItemService {
         Hero hero = heroRepository.findByUserId(userId)
                 .orElseThrow(() -> new UserNotFoundException("Hero not found"));
 
-        return heroItemRepository.findByHero(hero)
+        return heroItemRepository.findByHeroId(hero.getId())
                 .stream()
                 .map(heroItem -> InventoryItemDTO.builder()
                         .heroItemId(heroItem.getId())

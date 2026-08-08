@@ -1,5 +1,6 @@
 package app.service.item;
 
+import app.exception.HeroNotFoundException;
 import app.exception.ItemNotFoundException;
 import app.exception.UnauthorizedException;
 import app.exception.UserNotFoundException;
@@ -41,10 +42,10 @@ public class ItemService {
     public ForgeResultDTO forgeItem(UUID itemId, UUID userId) {
 
         Hero hero = heroRepository.findByUserId(userId)
-                .orElseThrow(() -> new UserNotFoundException("Hero not found"));
+                .orElseThrow(HeroNotFoundException::new);
 
         Item item = itemRepository.findById(itemId)
-                .orElseThrow(() -> new ItemNotFoundException("Item not found"));
+                .orElseThrow(ItemNotFoundException::new);
 
         if (hero.getHeroClass() != item.getHeroClass()) {
             return ForgeResultDTO.builder().message(String.format("A %s can't forge this item.", hero.getHeroClass().name().toLowerCase())).build();
@@ -69,7 +70,7 @@ public class ItemService {
     public List<InventoryItemDTO> getInventory(UUID userId) {
 
         Hero hero = heroRepository.findByUserId(userId)
-                .orElseThrow(() -> new UserNotFoundException("Hero not found"));
+                .orElseThrow(HeroNotFoundException::new);
 
         return heroItemRepository.findByHeroId(hero.getId())
                 .stream()
@@ -83,10 +84,10 @@ public class ItemService {
 
     public void dropItem(UUID heroItemId, UUID userId) {
         Hero hero = heroRepository.findByUserId(userId)
-                .orElseThrow(() -> new UserNotFoundException("Hero not found"));
+                .orElseThrow(HeroNotFoundException::new);
 
         HeroItem heroItem = heroItemRepository.findById(heroItemId)
-                .orElseThrow(() -> new ItemNotFoundException("Item not found"));
+                .orElseThrow(ItemNotFoundException::new);
 
         if (!heroItem.getHero().getId().equals(hero.getId())) {
             throw new UnauthorizedException("You cannot drop an item that you do not own.");

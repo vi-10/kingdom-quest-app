@@ -1,5 +1,6 @@
 package app.service.quest;
 
+import app.exception.HeroNotFoundException;
 import app.exception.QuestAlreadyExistsException;
 import app.exception.QuestNotFoundException;
 import app.exception.UserNotFoundException;
@@ -19,6 +20,7 @@ import app.service.event.EventService;
 import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -46,10 +48,10 @@ public class QuestService {
 
     public QuestResultDTO completeQuest(UUID id, UUID userId) {
         Hero hero = heroRepository.findByUserId(userId)
-                .orElseThrow(() -> new UserNotFoundException("Hero not found"));
+                .orElseThrow(HeroNotFoundException::new);
 
         Quest quest = questRepository.findById(id)
-                .orElseThrow(() -> new QuestNotFoundException("Quest not found"));
+                .orElseThrow(QuestNotFoundException::new);
 
         if (hero.getHeroClass() == HeroClass.WARRIOR && quest.getQuestType() != QuestType.COMBAT
                 || hero.getHeroClass() == HeroClass.MAGE && quest.getQuestType() != QuestType.MAGIC
@@ -102,9 +104,10 @@ public class QuestService {
         return result;
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     public void createQuest(CreateQuestDTO questData) {
         if (questRepository.existsByTitle(questData.getTitle())) {
-            throw new QuestAlreadyExistsException("A quest with this title already exists");
+            throw new QuestAlreadyExistsException(questData.getTitle());
         }
 
         Quest quest = Quest.builder()
@@ -119,15 +122,15 @@ public class QuestService {
         questRepository.save(quest);
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     public void editQuest(EditQuestDTO questData) {
         Quest quest = questRepository.findById(questData.getId())
-                .orElseThrow(() -> new QuestNotFoundException("Quest not found"));
+                .orElseThrow(QuestNotFoundException::new);
 
         Optional<Quest> existingQuest = questRepository.findByTitle(questData.getTitle());
 
         if (existingQuest.isPresent() && !existingQuest.get().getId().equals(questData.getId())) {
-            throw new QuestAlreadyExistsException("A quest with this title already exists"
-            );
+            throw new QuestAlreadyExistsException(questData.getTitle());
         }
 
         quest.setTitle(questData.getTitle());
@@ -140,10 +143,10 @@ public class QuestService {
         questRepository.save(quest);
     }
 
-
+    @PreAuthorize("hasRole('ADMIN')")
     public void deleteQuest(UUID questId) {
         if (!questRepository.existsById(questId)) {
-            throw new QuestNotFoundException("Quest not found");
+            throw new QuestNotFoundException();
         }
 
         questRepository.deleteById(questId);

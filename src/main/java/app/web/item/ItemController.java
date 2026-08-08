@@ -1,6 +1,7 @@
 package app.web.item;
 
 import app.model.dto.hero.HeroDTO;
+import app.model.dto.heroitem.InventoryItemDTO;
 import app.model.dto.item.ForgeResultDTO;
 import app.model.dto.item.ItemDTO;
 import app.security.AuthenticationUserDetails;
@@ -68,7 +69,7 @@ public class ItemController {
 
         UUID userId = principal.getId();
 
-        List<ItemDTO> items = itemService.getInventory(userId);
+        List<InventoryItemDTO> items = itemService.getInventory(userId);
 
         ModelAndView modelAndView = new ModelAndView("inventory");
         modelAndView.addObject("items", items);

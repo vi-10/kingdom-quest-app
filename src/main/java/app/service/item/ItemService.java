@@ -4,6 +4,7 @@ import app.exception.ItemNotFoundException;
 import app.exception.UnauthorizedException;
 import app.exception.UserNotFoundException;
 import app.mapper.item.ItemMapper;
+import app.model.dto.heroitem.InventoryItemDTO;
 import app.model.dto.item.ForgeResultDTO;
 import app.model.dto.item.ItemDTO;
 import app.model.entity.hero.Hero;
@@ -65,15 +66,18 @@ public class ItemService {
         return null;
     }
 
-    public List<ItemDTO> getInventory(UUID userId) {
+    public List<InventoryItemDTO> getInventory(UUID userId) {
 
         Hero hero = heroRepository.findByUserId(userId)
                 .orElseThrow(() -> new UserNotFoundException("Hero not found"));
 
-        return hero.getItems()
+        return heroItemRepository.findByHero(hero)
                 .stream()
-                .map(HeroItem::getItem)
-                .map(ItemMapper::toItemDTO)
+                .map(heroItem -> InventoryItemDTO.builder()
+                        .heroItemId(heroItem.getId())
+                        .name(heroItem.getItem().getName())
+                        .rarity(heroItem.getItem().getRarity())
+                        .build())
                 .toList();
     }
 

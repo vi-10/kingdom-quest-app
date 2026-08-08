@@ -1,6 +1,5 @@
 package app.service.user;
 
-import app.exception.QuestAlreadyExistsException;
 import app.exception.UserAlreadyExistsException;
 import app.exception.UserNotFoundException;
 import app.mapper.user.UserMapper;
@@ -17,6 +16,7 @@ import app.repository.user.UserRepository;
 import app.security.AuthenticationUserDetails;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -54,7 +54,7 @@ public class UserService implements UserDetailsService {
     public UserDTO register(RegisterDTO registerData) {
 
         if (userRepository.existsByUsername(registerData.getUsername())) {
-            throw new UserAlreadyExistsException("Username already exists.");
+            throw new UserAlreadyExistsException(registerData.getUsername());
         }
 
         User user = User.builder()
@@ -86,16 +86,18 @@ public class UserService implements UserDetailsService {
 
 
     public UserDTO getById(UUID id) {
-        User user = userRepository.findById(id).orElseThrow(() -> new UserNotFoundException("User doesn't exist"));
+        User user = userRepository.findById(id).orElseThrow(UserNotFoundException::new);
         return UserMapper.toUserDTO(user);
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     public List<UserDTO> getAllUsers() {
         return userRepository.findAll().stream().map(UserMapper::toUserDTO).toList();
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     public void switchRole(UUID id) {
-        User user = userRepository.findById(id).orElseThrow(() -> new UserNotFoundException("User doesn't exist"));
+        User user = userRepository.findById(id).orElseThrow(UserNotFoundException::new);
         if (user.getRole() == Role.USER) {
             user.setRole(Role.ADMIN);
         } else {
@@ -104,8 +106,9 @@ public class UserService implements UserDetailsService {
         userRepository.save(user);
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     public void switchStatus(UUID id) {
-        User user = userRepository.findById(id).orElseThrow(() -> new UserNotFoundException("User doesn't exist"));
+        User user = userRepository.findById(id).orElseThrow(UserNotFoundException::new);
         user.setActive(!user.isActive());
         userRepository.save(user);
     }
@@ -127,13 +130,12 @@ public class UserService implements UserDetailsService {
     public void editProfile(UUID userId, EditProfileRequest request) {
 
         User user = userRepository.findById(userId)
-                .orElseThrow(() -> new UserNotFoundException("User not found"));
+                .orElseThrow(UserNotFoundException::new);
 
         Optional<User> existingUser = userRepository.findByUsername(request.getUsername());
 
         if (existingUser.isPresent() && !existingUser.get().getId().equals(userId)) {
-            throw new UserAlreadyExistsException("Username already exists."
-            );
+            throw new UserAlreadyExistsException(request.getUsername());
         }
 
         Hero hero = user.getHero();

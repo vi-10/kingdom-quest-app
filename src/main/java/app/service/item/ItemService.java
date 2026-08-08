@@ -1,6 +1,7 @@
 package app.service.item;
 
 import app.exception.ItemNotFoundException;
+import app.exception.UnauthorizedException;
 import app.exception.UserNotFoundException;
 import app.mapper.item.ItemMapper;
 import app.model.dto.item.ForgeResultDTO;
@@ -74,5 +75,19 @@ public class ItemService {
                 .map(HeroItem::getItem)
                 .map(ItemMapper::toItemDTO)
                 .toList();
+    }
+
+    public void dropItem(UUID heroItemId, UUID userId) {
+        Hero hero = heroRepository.findByUserId(userId)
+                .orElseThrow(() -> new UserNotFoundException("Hero not found"));
+
+        HeroItem heroItem = heroItemRepository.findById(heroItemId)
+                .orElseThrow(() -> new ItemNotFoundException("Item not found"));
+
+        if (!heroItem.getHero().getId().equals(hero.getId())) {
+            throw new UnauthorizedException("You cannot drop an item that you do not own.");
+        }
+
+        heroItemRepository.delete(heroItem);
     }
 }

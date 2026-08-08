@@ -44,6 +44,10 @@
 
             </div>
 
+            <form th:action="@{/items/inventory/{heroItemId}(heroItemId=${item.heroItemId})}" th:method="DELETE">
+                <button type="submit" class="drop-btn"> Drop Item </button>
+            </form>
+
         </div>
     </div>
 

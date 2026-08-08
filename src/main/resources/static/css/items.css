@@ -113,3 +113,26 @@ body {
     color: #ff4d4d;
     font-weight: bold;
 }
+
+.drop-btn {
+width: 100%;
+padding: 12px;
+margin-top: 20px;
+
+border: none;
+border-radius: 8px;
+
+background-color: #8b2e2e;
+color: white;
+
+font-size: 1rem;
+font-weight: bold;
+
+cursor: pointer;
+transition: 0.3s;
+
+}
+
+.drop-btn {
+background-color: #b22222;
+}

@@ -1,5 +1,6 @@
 package app.service.hero;
 
+import app.exception.HeroNotFoundException;
 import app.exception.UserNotFoundException;
 import app.mapper.hero.HeroMapper;
 import app.model.dto.hero.HeroDTO;
@@ -22,7 +23,7 @@ public class HeroService {
     }
 
     public HeroDTO getByUserId(UUID userId) {
-        Hero hero = heroRepository.findByUserId(userId).orElseThrow(() -> new UserNotFoundException(String.format("User with %s id doesn't exist.", userId)));
+        Hero hero = heroRepository.findByUserId(userId).orElseThrow(HeroNotFoundException::new);
         return HeroMapper.toHeroDTO(hero);
     }
 }

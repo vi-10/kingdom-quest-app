@@ -1,12 +1,15 @@
 package app.service.user;
 
+import app.exception.QuestAlreadyExistsException;
 import app.exception.UserAlreadyExistsException;
 import app.exception.UserNotFoundException;
 import app.mapper.user.UserMapper;
+import app.model.dto.user.EditProfileRequest;
 import app.model.dto.user.RegisterDTO;
 import app.model.dto.user.UserDTO;
 import app.model.entity.hero.Hero;
 import app.model.entity.hero.HeroClass;
+import app.model.entity.quest.Quest;
 import app.model.entity.user.Role;
 import app.model.entity.user.User;
 import app.repository.hero.HeroRepository;
@@ -21,6 +24,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 @Service
@@ -118,5 +122,33 @@ public class UserService implements UserDetailsService {
                 .role(user.getRole())
                 .isActive(user.isActive())
                 .build();
+    }
+
+    public void editProfile(UUID userId, EditProfileRequest request) {
+
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new UserNotFoundException("User not found"));
+
+        Optional<User> existingUser = userRepository.findByUsername(request.getUsername());
+
+        if (existingUser.isPresent() && !existingUser.get().getId().equals(userId)) {
+            throw new UserAlreadyExistsException("Username already exists."
+            );
+        }
+
+        Hero hero = user.getHero();
+
+        user.setUsername(request.getUsername());
+        user.setEmail(request.getEmail());
+
+        if(request.getProfilePicture() == null || request.getProfilePicture().isBlank()){
+            user.setProfilePicture(getDefaultProfilePicture(hero.getHeroClass()));
+        } else {
+            user.setProfilePicture(request.getProfilePicture());
+        }
+
+        hero.setRoleplayName(request.getRoleplayName());
+
+        userRepository.save(user);
     }
 }

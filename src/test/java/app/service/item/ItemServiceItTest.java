@@ -2,6 +2,7 @@ package app.service.item;
 
 import app.exception.HeroNotFoundException;
 import app.exception.ItemNotFoundException;
+import app.exception.UnauthorizedException;
 import app.model.dto.heroitem.InventoryItemDTO;
 import app.model.dto.item.ForgeResultDTO;
 import app.model.dto.item.ItemDTO;
@@ -295,12 +296,7 @@ public class ItemServiceItTest {
         userRepository.save(user);
         heroRepository.save(hero);
 
-        Item item = Item.builder()
-                .name("Iron Sword")
-                .heroClass(HeroClass.WARRIOR)
-                .requiredGold(40)
-                .rarity(ItemRarity.COMMON)
-                .build();
+        Item item = getItem();
 
         itemRepository.save(item);
 
@@ -330,6 +326,135 @@ public class ItemServiceItTest {
                 () -> itemService.getInventory(UUID.randomUUID())
         );
     }
+
+    @Test
+    void dropItem_shouldDeleteItem() {
+
+        User user = getUser();
+
+        Hero hero = Hero.builder()
+                .roleplayName("Warrior")
+                .heroClass(HeroClass.WARRIOR)
+                .level(1)
+                .xp(0)
+                .gold(100)
+                .user(user)
+                .build();
+
+        user.setHero(hero);
+
+        userRepository.save(user);
+        heroRepository.save(hero);
+
+        Item item = getItem();
+
+        itemRepository.save(item);
+
+        HeroItem heroItem = HeroItem.builder()
+                .hero(hero)
+                .item(item)
+                .build();
+
+        heroItemRepository.save(heroItem);
+
+        UUID heroItemId = heroItem.getId();
+
+        itemService.dropItem(heroItemId, user.getId());
+
+        assertFalse(
+                heroItemRepository.existsById(heroItemId)
+        );
+    }
+
+    @Test
+    void dropItem_shouldThrow_whenItemDoesNotExist() {
+
+        User user = getUser();
+
+        Hero hero = Hero.builder()
+                .roleplayName("Warrior")
+                .heroClass(HeroClass.WARRIOR)
+                .level(1)
+                .xp(0)
+                .gold(100)
+                .user(user)
+                .build();
+
+        user.setHero(hero);
+
+        userRepository.save(user);
+        heroRepository.save(hero);
+
+        assertThrows(
+                ItemNotFoundException.class,
+                () -> itemService.dropItem(
+                        UUID.randomUUID(),
+                        user.getId()
+                )
+        );
+    }
+
+    @Test
+    void dropItem_shouldThrow_whenItemDoesNotBelongToUser() {
+
+        User firstUser = getUser();
+
+        Hero firstHero = Hero.builder()
+                .roleplayName("First Warrior")
+                .heroClass(HeroClass.WARRIOR)
+                .level(1)
+                .xp(0)
+                .gold(100)
+                .user(firstUser)
+                .build();
+
+        firstUser.setHero(firstHero);
+        firstUser.setUsername("user1");
+
+        userRepository.save(firstUser);
+        heroRepository.save(firstHero);
+
+        User secondUser = getUser();
+
+        Hero secondHero = Hero.builder()
+                .roleplayName("Second Warrior")
+                .heroClass(HeroClass.WARRIOR)
+                .level(1)
+                .xp(0)
+                .gold(100)
+                .user(secondUser)
+                .build();
+
+        secondUser.setHero(secondHero);
+        firstUser.setUsername("user2");
+
+        userRepository.save(secondUser);
+        heroRepository.save(secondHero);
+
+        Item item = getItem();
+
+        itemRepository.save(item);
+
+        HeroItem heroItem = HeroItem.builder()
+                .hero(secondHero)
+                .item(item)
+                .build();
+
+        heroItemRepository.save(heroItem);
+
+        assertThrows(
+                UnauthorizedException.class,
+                () -> itemService.dropItem(
+                        heroItem.getId(),
+                        firstUser.getId()
+                )
+        );
+
+        assertTrue(
+                heroItemRepository.existsById(heroItem.getId())
+        );
+    }
+
 
 
 }

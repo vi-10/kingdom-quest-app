@@ -104,7 +104,6 @@ public class QuestService {
         return result;
     }
 
-    @PreAuthorize("hasRole('ADMIN')")
     public void createQuest(CreateQuestDTO questData) {
         if (questRepository.existsByTitle(questData.getTitle())) {
             throw new QuestAlreadyExistsException(questData.getTitle());
@@ -122,7 +121,6 @@ public class QuestService {
         questRepository.save(quest);
     }
 
-    @PreAuthorize("hasRole('ADMIN')")
     public void editQuest(EditQuestDTO questData) {
         Quest quest = questRepository.findById(questData.getId())
                 .orElseThrow(QuestNotFoundException::new);
@@ -143,7 +141,6 @@ public class QuestService {
         questRepository.save(quest);
     }
 
-    @PreAuthorize("hasRole('ADMIN')")
     public void deleteQuest(UUID questId) {
         if (!questRepository.existsById(questId)) {
             throw new QuestNotFoundException();

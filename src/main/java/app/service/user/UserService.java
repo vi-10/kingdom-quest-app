@@ -90,12 +90,10 @@ public class UserService implements UserDetailsService {
         return UserMapper.toUserDTO(user);
     }
 
-    @PreAuthorize("hasRole('ADMIN')")
     public List<UserDTO> getAllUsers() {
         return userRepository.findAll().stream().map(UserMapper::toUserDTO).toList();
     }
 
-    @PreAuthorize("hasRole('ADMIN')")
     public void switchRole(UUID id) {
         User user = userRepository.findById(id).orElseThrow(UserNotFoundException::new);
         if (user.getRole() == Role.USER) {
@@ -106,7 +104,6 @@ public class UserService implements UserDetailsService {
         userRepository.save(user);
     }
 
-    @PreAuthorize("hasRole('ADMIN')")
     public void switchStatus(UUID id) {
         User user = userRepository.findById(id).orElseThrow(UserNotFoundException::new);
         user.setActive(!user.isActive());

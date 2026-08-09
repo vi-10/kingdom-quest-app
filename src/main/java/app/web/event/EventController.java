@@ -9,6 +9,7 @@ import app.model.dto.quest.EditQuestDTO;
 import app.model.dto.quest.QuestDTO;
 import app.service.event.EventService;
 import jakarta.validation.Valid;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
@@ -35,6 +36,7 @@ public class EventController {
 
      }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/admin/events/create")
     public ModelAndView getCreateEventPage() {
 
@@ -45,6 +47,7 @@ public class EventController {
         return modelAndView;
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @PostMapping("/admin/events/create")
     public ModelAndView createEvent(
             @Valid @ModelAttribute("eventData") CreateEventRequest request,
@@ -59,6 +62,7 @@ public class EventController {
         return new ModelAndView("redirect:/admin/events");
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/admin/events/edit")
     public ModelAndView getEditEventPage() {
 
@@ -70,6 +74,7 @@ public class EventController {
         return modelAndView;
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @PutMapping("/admin/events/edit")
     public ModelAndView editEvent(
             @Valid @ModelAttribute("eventData") EditEventRequest request,
@@ -88,6 +93,7 @@ public class EventController {
         return new ModelAndView("redirect:/admin/events");
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/admin/events/delete")
     public ModelAndView getDeleteEventPage() {
 
@@ -99,6 +105,7 @@ public class EventController {
         return modelAndView;
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping("/admin/events/delete")
     public ModelAndView deleteEvent(@RequestParam UUID eventId) {
 

@@ -9,6 +9,7 @@ import app.service.hero.HeroService;
 import app.service.user.UserService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
@@ -79,6 +80,7 @@ public class UserController {
         return modelAndView;
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/admin/users")
     public ModelAndView getAllUsers() {
 
@@ -90,23 +92,27 @@ public class UserController {
         return modelAndView;
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @PutMapping("/admin/users/{id}/role")
     public ModelAndView switchRole(@PathVariable UUID id) {
         userService.switchRole(id);
         return new ModelAndView("redirect:/admin/users");
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @PutMapping("/admin/users/{id}/status")
     public ModelAndView switchStatus(@PathVariable UUID id) {
         userService.switchStatus(id);
         return new ModelAndView("redirect:/admin/users");
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/admin/quests")
     public ModelAndView getQuestAdminPage(){
         return new ModelAndView("quests-administration");
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/admin/events")
     public ModelAndView getEventAdminPage(){
         return new ModelAndView("events-administration");

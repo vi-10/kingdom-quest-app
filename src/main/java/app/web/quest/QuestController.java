@@ -10,6 +10,7 @@ import app.service.hero.HeroService;
 import app.service.quest.QuestService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
@@ -60,6 +61,7 @@ public class QuestController {
         return modelAndView;
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/admin/quests/create")
     public ModelAndView getCreateQuestPage() {
 
@@ -70,6 +72,7 @@ public class QuestController {
         return modelAndView;
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @PostMapping("/admin/quests/create")
     public ModelAndView createQuest(
             @Valid @ModelAttribute("questData") CreateQuestDTO questData,
@@ -84,6 +87,7 @@ public class QuestController {
         return new ModelAndView("redirect:/admin/quests");
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/admin/quests/edit")
     public ModelAndView getEditQuestPage() {
 
@@ -95,6 +99,7 @@ public class QuestController {
         return modelAndView;
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @PutMapping("/admin/quests/edit")
     public ModelAndView editQuest(@Valid @ModelAttribute("questData") EditQuestDTO questData,
             BindingResult bindingResult) {
@@ -112,6 +117,7 @@ public class QuestController {
         return new ModelAndView("redirect:/admin/quests");
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/admin/quests/delete")
     public ModelAndView getDeleteQuestPage() {
 
@@ -123,6 +129,7 @@ public class QuestController {
         return modelAndView;
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping("/admin/quests/delete")
     public ModelAndView deleteQuest(@RequestParam UUID questId) {
 

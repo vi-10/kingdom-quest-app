@@ -1,6 +1,8 @@
 package app.service.quest;
 
+import app.exception.QuestAlreadyExistsException;
 import app.exception.QuestNotFoundException;
+import app.model.dto.quest.CreateQuestDTO;
 import app.model.dto.quest.QuestDTO;
 import app.model.dto.quest.QuestResultDTO;
 import app.model.entity.hero.Hero;
@@ -240,5 +242,54 @@ public class QuestServiceItTest {
                 )
         );
     }
+
+    @Test
+    void createQuest_shouldCreateQuest() {
+
+        CreateQuestDTO request = CreateQuestDTO.builder()
+                .title("New Quest")
+                .description("New quest description.")
+                .requiredLevel(2)
+                .rewardXp(100)
+                .rewardGold(50)
+                .questType(QuestType.MAGIC)
+                .build();
+
+        questService.createQuest(request);
+
+        Quest savedQuest = questRepository.findByTitle("New Quest")
+                .orElseThrow();
+
+        assertEquals("New Quest", savedQuest.getTitle());
+        assertEquals("New quest description.", savedQuest.getDescription());
+        assertEquals(2, savedQuest.getRequiredLevel());
+        assertEquals(100, savedQuest.getRewardXp());
+        assertEquals(50, savedQuest.getRewardGold());
+        assertEquals(QuestType.MAGIC, savedQuest.getQuestType());
+    }
+
+
+    @Test
+    void createQuest_shouldThrow_whenTitleAlreadyExists() {
+
+        Quest existingQuest = getQuest();
+
+        questRepository.save(existingQuest);
+
+        CreateQuestDTO request = CreateQuestDTO.builder()
+                .title("Defeat the Goblin")
+                .description("Another quest.")
+                .requiredLevel(2)
+                .rewardXp(100)
+                .rewardGold(50)
+                .questType(QuestType.MAGIC)
+                .build();
+
+        assertThrows(
+                QuestAlreadyExistsException.class,
+                () -> questService.createQuest(request)
+        );
+    }
+
 
 }

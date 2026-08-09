@@ -2,6 +2,7 @@ package app.service.item;
 
 import app.exception.HeroNotFoundException;
 import app.exception.ItemNotFoundException;
+import app.model.dto.heroitem.InventoryItemDTO;
 import app.model.dto.item.ForgeResultDTO;
 import app.model.dto.item.ItemDTO;
 import app.model.entity.hero.Hero;
@@ -272,6 +273,61 @@ public class ItemServiceItTest {
                         item.getId(),
                         UUID.randomUUID()
                 )
+        );
+    }
+
+    @Test
+    void getInventory_shouldReturnHeroItems() {
+
+        User user = getUser();
+
+        Hero hero = Hero.builder()
+                .roleplayName("Warrior")
+                .heroClass(HeroClass.WARRIOR)
+                .level(1)
+                .xp(0)
+                .gold(100)
+                .user(user)
+                .build();
+
+        user.setHero(hero);
+
+        userRepository.save(user);
+        heroRepository.save(hero);
+
+        Item item = Item.builder()
+                .name("Iron Sword")
+                .heroClass(HeroClass.WARRIOR)
+                .requiredGold(40)
+                .rarity(ItemRarity.COMMON)
+                .build();
+
+        itemRepository.save(item);
+
+        HeroItem heroItem = HeroItem.builder()
+                .hero(hero)
+                .item(item)
+                .build();
+
+        heroItemRepository.save(heroItem);
+
+        List<InventoryItemDTO> inventory = itemService.getInventory(user.getId());
+
+        assertEquals(1, inventory.size());
+
+        InventoryItemDTO inventoryItem = inventory.get(0);
+
+        assertEquals(heroItem.getId(), inventoryItem.getHeroItemId());
+        assertEquals("Iron Sword", inventoryItem.getName());
+        assertEquals(ItemRarity.COMMON, inventoryItem.getRarity());
+    }
+
+    @Test
+    void getInventory_shouldThrow_whenHeroDoesNotExist() {
+
+        assertThrows(
+                HeroNotFoundException.class,
+                () -> itemService.getInventory(UUID.randomUUID())
         );
     }
 

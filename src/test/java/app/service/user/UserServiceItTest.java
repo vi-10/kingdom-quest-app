@@ -1,6 +1,7 @@
 package app.service.user;
 
 import app.exception.UserAlreadyExistsException;
+import app.exception.UserNotFoundException;
 import app.model.dto.user.RegisterDTO;
 import app.model.dto.user.UserDTO;
 import app.model.entity.hero.Hero;
@@ -18,7 +19,10 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
 
+import java.util.UUID;
+
 import static app.util.user.UserFactory.getRegisterDTO;
+import static app.util.user.UserFactory.getUser;
 import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
@@ -86,5 +90,32 @@ public class UserServiceItTest {
         );
     }
 
+    @Test
+    void getById_shouldReturnUserDTO() {
 
+        User user = getUser();
+
+        userRepository.save(user);
+
+        UserDTO result = userService.getById(user.getId());
+
+        assertNotNull(result);
+        assertEquals(user.getId(), result.getId());
+        assertEquals("testUser", result.getUsername());
+        assertEquals("test@example.com", result.getEmail());
+        assertEquals(Role.USER, result.getRole());
+        assertEquals(Server.EUROPE, result.getServer());
+        assertTrue(result.isActive());
+    }
+
+    @Test
+    void getById_shouldThrowException_whenUserDoesNotExist() {
+
+        UUID id = UUID.randomUUID();
+
+        assertThrows(
+                UserNotFoundException.class,
+                () -> userService.getById(id)
+        );
+    }
 }

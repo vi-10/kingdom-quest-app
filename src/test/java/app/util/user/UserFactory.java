@@ -1,5 +1,6 @@
 package app.util.user;
 
+import app.model.dto.user.EditProfileRequest;
 import app.model.dto.user.RegisterDTO;
 import app.model.entity.hero.HeroClass;
 import app.model.entity.user.Role;
@@ -30,6 +31,15 @@ public class UserFactory {
                 .server(Server.EUROPE)
                 .isActive(true)
                 .profilePicture("/images/warrior.jpeg")
+                .build();
+    }
+
+    public static EditProfileRequest getEditProfileRequest(){
+        return EditProfileRequest.builder()
+                .username("newUsername")
+                .email("new@example.com")
+                .profilePicture("/images/new-picture.jpg")
+                .roleplayName("NewName")
                 .build();
     }
 

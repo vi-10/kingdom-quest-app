@@ -6,7 +6,10 @@ import app.model.entity.hero.HeroClass;
 import app.model.entity.user.Role;
 import app.model.entity.user.Server;
 import app.model.entity.user.User;
+import app.security.AuthenticationUserDetails;
 import lombok.experimental.UtilityClass;
+
+import java.util.UUID;
 
 @UtilityClass
 public class UserFactory {
@@ -40,6 +43,16 @@ public class UserFactory {
                 .email("new@example.com")
                 .profilePicture("/images/new-picture.jpg")
                 .roleplayName("NewName")
+                .build();
+    }
+
+    public static AuthenticationUserDetails getUserPrincipal() {
+
+        return AuthenticationUserDetails.builder()
+                .id(UUID.randomUUID())
+                .username("AdminUser")
+                .role(Role.ADMIN)
+                .isActive(true)
                 .build();
     }
 

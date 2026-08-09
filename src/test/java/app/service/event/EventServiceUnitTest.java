@@ -54,6 +54,34 @@ public class EventServiceUnitTest {
         verify(eventClient).getActiveEvent();
     }
 
+    @Test
+    void createEvent_shouldCallEventClient() {
 
+        CreateEventRequest request = new CreateEventRequest();
+
+        eventService.createEvent(request);
+
+        verify(eventClient).createEvent(request);
+    }
+
+    @Test
+    void editEvent_shouldCallEventClient() {
+
+        EditEventRequest request = new EditEventRequest();
+
+        eventService.editEvent(request);
+
+        verify(eventClient).editEvent(request);
+    }
+
+    @Test
+    void deleteEvent_shouldCallEventClient() {
+
+        UUID eventId = UUID.randomUUID();
+
+        eventService.deleteEvent(eventId);
+
+        verify(eventClient).deleteEvent(eventId);
+    }
 
 }

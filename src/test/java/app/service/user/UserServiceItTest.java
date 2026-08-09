@@ -11,10 +11,13 @@ import app.model.entity.user.Server;
 import app.model.entity.user.User;
 import app.repository.hero.HeroRepository;
 import app.repository.user.UserRepository;
+import app.security.AuthenticationUserDetails;
 import jakarta.transaction.Transactional;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
@@ -116,6 +119,37 @@ public class UserServiceItTest {
         assertThrows(
                 UserNotFoundException.class,
                 () -> userService.getById(id)
+        );
+    }
+
+    @Test
+    void loadUserByUsername_shouldReturnAuthenticationDetails() {
+
+        User user = getUser();
+
+        userRepository.save(user);
+
+        UserDetails result = userService.loadUserByUsername("testUser");
+
+        assertNotNull(result);
+        assertEquals("testUser", result.getUsername());
+        assertEquals("password", result.getPassword());
+        assertTrue(result.isEnabled());
+
+        AuthenticationUserDetails authenticationDetails =
+                (AuthenticationUserDetails) result;
+
+        assertEquals(user.getId(), authenticationDetails.getId());
+        assertEquals(Role.USER, authenticationDetails.getRole());
+        assertTrue(authenticationDetails.isActive());
+    }
+
+    @Test
+    void loadUserByUsername_shouldThrowException_whenUserDoesNotExist() {
+
+        assertThrows(
+                UsernameNotFoundException.class,
+                () -> userService.loadUserByUsername("unknownUser")
         );
     }
 }

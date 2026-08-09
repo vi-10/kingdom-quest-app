@@ -23,6 +23,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
 
+import java.util.List;
 import java.util.UUID;
 
 import static app.util.user.UserFactory.*;
@@ -283,6 +284,43 @@ public class UserServiceItTest {
                 UserAlreadyExistsException.class,
                 () -> userService.editProfile(firstUser.getId(), request)
         );
+    }
+
+    @Test
+    void getAllUsers_shouldReturnAllUsers() {
+
+        long usersBefore = userRepository.count();
+
+        User firstUser = User.builder()
+                .username("user1")
+                .password("password")
+                .email("user1@example.com")
+                .role(Role.USER)
+                .server(Server.EUROPE)
+                .isActive(true)
+                .build();
+
+        User secondUser = User.builder()
+                .username("user2")
+                .password("password")
+                .email("user2@example.com")
+                .role(Role.USER)
+                .server(Server.EUROPE)
+                .isActive(true)
+                .build();
+
+        userRepository.save(firstUser);
+        userRepository.save(secondUser);
+
+        List<UserDTO> result = userService.getAllUsers();
+
+        assertEquals(usersBefore + 2, result.size());
+
+        assertTrue(result.stream()
+                .anyMatch(user -> user.getUsername().equals("user1")));
+
+        assertTrue(result.stream()
+                .anyMatch(user -> user.getUsername().equals("user2")));
     }
 
 

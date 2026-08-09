@@ -2,6 +2,7 @@ package app.service.quest;
 
 import app.exception.QuestAlreadyExistsException;
 import app.exception.QuestNotFoundException;
+import app.model.dto.event.ActiveEventResponse;
 import app.model.dto.quest.CreateQuestDTO;
 import app.model.dto.quest.EditQuestDTO;
 import app.model.dto.quest.QuestDTO;
@@ -136,6 +137,54 @@ public class QuestServiceItTest {
         assertEquals(80, updatedHero.getXp());
         assertEquals(150, updatedHero.getGold());
         assertEquals(1, updatedHero.getLevel());
+    }
+
+    @Test
+    void completeQuest_shouldApplyActiveEventBonus() {
+
+        User user = getUser();
+
+        Hero hero = Hero.builder()
+                .roleplayName("Warrior")
+                .heroClass(HeroClass.WARRIOR)
+                .level(1)
+                .xp(0)
+                .gold(100)
+                .user(user)
+                .build();
+
+        user.setHero(hero);
+
+        userRepository.save(user);
+        heroRepository.save(hero);
+
+        Quest quest = getQuest();
+
+        questRepository.save(quest);
+
+        ActiveEventResponse event = ActiveEventResponse.builder()
+                .title("Warrior Festival")
+                .affectedQuestType(QuestType.COMBAT)
+                .bonusXp(30)
+                .bonusGold(20)
+                .build();
+
+        when(eventService.getActiveEvent()).thenReturn(event);
+
+        QuestResultDTO result =
+                questService.completeQuest(quest.getId(), user.getId());
+
+        assertTrue(result.isSuccess());
+
+        Hero updatedHero =
+                heroRepository.findById(hero.getId()).orElseThrow();
+
+        assertEquals(110, updatedHero.getXp());
+        assertEquals(170, updatedHero.getGold());
+
+        assertTrue(result.getMessage().contains("Warrior Festival"));
+        assertTrue(result.getMessage().contains("Bonus: +30 XP and +20 Gold"));
+        assertTrue(result.getMessage().contains("Total: 110 XP and 70 Gold"));
     }
 
     @Test

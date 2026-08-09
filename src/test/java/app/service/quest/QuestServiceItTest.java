@@ -374,6 +374,30 @@ public class QuestServiceItTest {
         );
     }
 
+    @Test
+    void deleteQuest_shouldDeleteQuest() {
+
+        Quest quest = getQuest();
+
+        questRepository.save(quest);
+
+        questService.deleteQuest(quest.getId());
+
+        assertFalse(
+                questRepository.existsById(quest.getId())
+        );
+    }
+
+    @Test
+    void deleteQuest_shouldThrow_whenQuestDoesNotExist() {
+
+        UUID questId = UUID.randomUUID();
+
+        assertThrows(
+                QuestNotFoundException.class,
+                () -> questService.deleteQuest(questId)
+        );
+    }
 
 
 }

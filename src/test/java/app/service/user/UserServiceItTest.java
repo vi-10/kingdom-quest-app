@@ -2,6 +2,7 @@ package app.service.user;
 
 import app.exception.UserAlreadyExistsException;
 import app.exception.UserNotFoundException;
+import app.model.dto.user.EditProfileRequest;
 import app.model.dto.user.RegisterDTO;
 import app.model.dto.user.UserDTO;
 import app.model.entity.hero.Hero;
@@ -24,8 +25,7 @@ import org.springframework.test.context.ActiveProfiles;
 
 import java.util.UUID;
 
-import static app.util.user.UserFactory.getRegisterDTO;
-import static app.util.user.UserFactory.getUser;
+import static app.util.user.UserFactory.*;
 import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
@@ -152,4 +152,138 @@ public class UserServiceItTest {
                 () -> userService.loadUserByUsername("unknownUser")
         );
     }
+
+    @Test
+    void editProfile_shouldUpdateUserAndHero() {
+
+        User user = User.builder()
+                .username("oldUsername")
+                .password("password")
+                .email("old@example.com")
+                .profilePicture("/images/warrior.jpeg")
+                .role(Role.USER)
+                .server(Server.EUROPE)
+                .isActive(true)
+                .build();
+
+        Hero hero = Hero.builder()
+                .roleplayName("OldName")
+                .heroClass(HeroClass.WARRIOR)
+                .level(5)
+                .xp(400)
+                .gold(200)
+                .user(user)
+                .build();
+
+        user.setHero(hero);
+
+        userRepository.save(user);
+        heroRepository.save(hero);
+
+        EditProfileRequest request = getEditProfileRequest();
+
+        userService.editProfile(user.getId(), request);
+
+        User updatedUser = userRepository.findById(user.getId())
+                .orElseThrow();
+
+        Hero updatedHero = heroRepository.findByUserId(updatedUser.getId())
+                .orElseThrow();
+
+        assertEquals("newUsername", updatedUser.getUsername());
+        assertEquals("new@example.com", updatedUser.getEmail());
+        assertEquals("/images/new-picture.jpg", updatedUser.getProfilePicture());
+
+        assertEquals("NewName", updatedHero.getRoleplayName());
+
+        assertEquals(HeroClass.WARRIOR, updatedHero.getHeroClass());
+        assertEquals(5, updatedHero.getLevel());
+        assertEquals(400, updatedHero.getXp());
+        assertEquals(200, updatedHero.getGold());
+    }
+
+    @Test
+    void editProfile_shouldUseDefaultPicture_whenProfilePictureIsBlank() {
+
+        User user = User.builder()
+                .username("testUser")
+                .password("password")
+                .email("test@example.com")
+                .profilePicture("/images/old.jpg")
+                .role(Role.USER)
+                .server(Server.EUROPE)
+                .isActive(true)
+                .build();
+
+        Hero hero = Hero.builder()
+                .roleplayName("Hero")
+                .heroClass(HeroClass.MAGE)
+                .level(1)
+                .xp(0)
+                .gold(100)
+                .user(user)
+                .build();
+
+        user.setHero(hero);
+
+        userRepository.save(user);
+        heroRepository.save(hero);
+
+        EditProfileRequest request = EditProfileRequest.builder()
+                .username("testUser")
+                .email("test@example.com")
+                .profilePicture("   ")
+                .roleplayName("Updated Hero")
+                .build();
+
+        userService.editProfile(user.getId(), request);
+
+        User updatedUser = userRepository.findById(user.getId())
+                .orElseThrow();
+
+        assertEquals("/images/mage.png", updatedUser.getProfilePicture());
+    }
+
+    @Test
+    void editProfile_shouldThrowException_whenUserDoesNotExist() {
+
+        EditProfileRequest request = getEditProfileRequest();
+
+        assertThrows(
+                UserNotFoundException.class,
+                () -> userService.editProfile(UUID.randomUUID(), request)
+        );
+    }
+
+    @Test
+    void editProfile_shouldThrowException_whenUsernameBelongsToAnotherUser() {
+
+        User firstUser = getUser();
+
+        User secondUser = User.builder()
+                .username("secondUser")
+                .password("password")
+                .email("second@example.com")
+                .role(Role.USER)
+                .server(Server.EUROPE)
+                .isActive(true)
+                .build();
+
+        userRepository.save(firstUser);
+        userRepository.save(secondUser);
+
+        EditProfileRequest request = EditProfileRequest.builder()
+                .username("secondUser")
+                .email("new@example.com")
+                .profilePicture("/images/test.jpg")
+                .roleplayName("Hero")
+                .build();
+
+        assertThrows(
+                UserAlreadyExistsException.class,
+                () -> userService.editProfile(firstUser.getId(), request)
+        );
+    }
+
+
 }

@@ -323,5 +323,52 @@ public class UserServiceItTest {
                 .anyMatch(user -> user.getUsername().equals("user2")));
     }
 
+    @Test
+    void switchRole_shouldChangeUserRoleFromUserToAdmin() {
+
+        User user = getUser();
+
+        userRepository.save(user);
+
+        userService.switchRole(user.getId());
+
+        User updatedUser = userRepository.findById(user.getId())
+                .orElseThrow();
+
+        assertEquals(Role.ADMIN, updatedUser.getRole());
+    }
+
+    @Test
+    void switchRole_shouldChangeUserRoleFromAdminToUser() {
+
+        User user = User.builder()
+                .username("testAdmin")
+                .password("password")
+                .email("admin@example.com")
+                .role(Role.ADMIN)
+                .server(Server.EUROPE)
+                .isActive(true)
+                .build();
+
+        userRepository.save(user);
+
+        userService.switchRole(user.getId());
+
+        User updatedUser = userRepository.findById(user.getId())
+                .orElseThrow();
+
+        assertEquals(Role.USER, updatedUser.getRole());
+    }
+
+    @Test
+    void switchRole_shouldThrowException_whenUserDoesNotExist() {
+
+        UUID id = UUID.randomUUID();
+
+        assertThrows(
+                UserNotFoundException.class,
+                () -> userService.switchRole(id)
+        );
+    }
 
 }

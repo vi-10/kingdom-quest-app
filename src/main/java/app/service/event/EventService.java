@@ -7,6 +7,7 @@ import app.model.dto.event.EventDTO;
 import app.service.event.client.EventClient;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -21,18 +22,22 @@ public class EventService {
         return eventClient.getActiveEvent().getBody();
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     public void createEvent(CreateEventRequest request){
         eventClient.createEvent(request);
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     public void editEvent(EditEventRequest request){
         eventClient.editEvent(request);
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     public List<EventDTO> getAllEvents() {
         return eventClient.getAllEvents().getBody();
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     public void deleteEvent(UUID eventId) {
         eventClient.deleteEvent(eventId);
     }

@@ -3,6 +3,7 @@ package app.service.quest;
 import app.exception.QuestAlreadyExistsException;
 import app.exception.QuestNotFoundException;
 import app.model.dto.quest.CreateQuestDTO;
+import app.model.dto.quest.EditQuestDTO;
 import app.model.dto.quest.QuestDTO;
 import app.model.dto.quest.QuestResultDTO;
 import app.model.entity.hero.Hero;
@@ -290,6 +291,89 @@ public class QuestServiceItTest {
                 () -> questService.createQuest(request)
         );
     }
+
+    @Test
+    void editQuest_shouldUpdateQuest() {
+
+        Quest quest = getQuest();
+
+        questRepository.save(quest);
+
+        EditQuestDTO request = EditQuestDTO.builder()
+                .id(quest.getId())
+                .title("New Title")
+                .description("New description.")
+                .requiredLevel(3)
+                .rewardXp(150)
+                .rewardGold(75)
+                .questType(QuestType.MAGIC)
+                .build();
+
+        questService.editQuest(request);
+
+        Quest updatedQuest =
+                questRepository.findById(quest.getId()).orElseThrow();
+
+        assertEquals("New Title", updatedQuest.getTitle());
+        assertEquals("New description.", updatedQuest.getDescription());
+        assertEquals(3, updatedQuest.getRequiredLevel());
+        assertEquals(150, updatedQuest.getRewardXp());
+        assertEquals(75, updatedQuest.getRewardGold());
+        assertEquals(QuestType.MAGIC, updatedQuest.getQuestType());
+    }
+
+    @Test
+    void editQuest_shouldThrow_whenQuestDoesNotExist() {
+
+        EditQuestDTO request = EditQuestDTO.builder()
+                .id(UUID.randomUUID())
+                .title("New Quest")
+                .description("Description.")
+                .requiredLevel(1)
+                .rewardXp(50)
+                .rewardGold(20)
+                .questType(QuestType.COMBAT)
+                .build();
+
+        assertThrows(
+                QuestNotFoundException.class,
+                () -> questService.editQuest(request)
+        );
+    }
+
+    @Test
+    void editQuest_shouldThrow_whenTitleAlreadyExists() {
+
+        Quest firstQuest = getQuest();
+
+        Quest secondQuest = Quest.builder()
+                .title("Second Quest")
+                .description("Second.")
+                .requiredLevel(1)
+                .rewardXp(50)
+                .rewardGold(20)
+                .questType(QuestType.MAGIC)
+                .build();
+
+        questRepository.save(firstQuest);
+        questRepository.save(secondQuest);
+
+        EditQuestDTO request = EditQuestDTO.builder()
+                .id(secondQuest.getId())
+                .title("Defeat the Goblin")
+                .description("Updated.")
+                .requiredLevel(2)
+                .rewardXp(100)
+                .rewardGold(50)
+                .questType(QuestType.MAGIC)
+                .build();
+
+        assertThrows(
+                QuestAlreadyExistsException.class,
+                () -> questService.editQuest(request)
+        );
+    }
+
 
 
 }

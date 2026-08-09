@@ -28,7 +28,7 @@ public class GlobalExceptionHandler {
         modelAndView.addObject("errorTitle", e.getErrorTitle());
         return modelAndView; }
 
-    @ExceptionHandler(FeignException.FeignClientException.class)
+    @ExceptionHandler(FeignException.class)
     public ModelAndView handleFeignException(FeignException ex) throws IOException {
         log.error("FeignException occurred: {}", ex.getMessage(), ex);
 
@@ -38,6 +38,19 @@ public class GlobalExceptionHandler {
         modelAndView.addObject( "errorMessage", errorResponse.getMessage());
         modelAndView.addObject( "errorCode", errorResponse.getErrorCode());
         modelAndView.addObject( "errorTitle", errorResponse.getErrorTitle());
+
+        return modelAndView;
+    }
+
+    @ExceptionHandler(IOException.class)
+    public ModelAndView handleIOException(IOException ex) {
+
+        log.error("IOException occurred: {}", ex.getMessage(), ex);
+
+        ModelAndView modelAndView = new ModelAndView("error");
+        modelAndView.addObject("errorMessage", "An error occurred while processing the microservice response.");
+        modelAndView.addObject("errorCode", "500");
+        modelAndView.addObject("errorTitle", "Microservice Communication Error");
 
         return modelAndView;
     }

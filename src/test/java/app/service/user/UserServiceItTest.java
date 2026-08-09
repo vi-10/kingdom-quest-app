@@ -371,4 +371,52 @@ public class UserServiceItTest {
         );
     }
 
+    @Test
+    void switchStatus_shouldDeactivateActiveUser() {
+
+        User user = getUser();
+
+        userRepository.save(user);
+
+        userService.switchStatus(user.getId());
+
+        User updatedUser = userRepository.findById(user.getId())
+                .orElseThrow();
+
+        assertFalse(updatedUser.isActive());
+    }
+
+    @Test
+    void switchStatus_shouldActivateInactiveUser() {
+
+        User user = User.builder()
+                .username("testUser")
+                .password("password")
+                .email("test@example.com")
+                .role(Role.USER)
+                .server(Server.EUROPE)
+                .isActive(false)
+                .build();
+
+        userRepository.save(user);
+
+        userService.switchStatus(user.getId());
+
+        User updatedUser = userRepository.findById(user.getId())
+                .orElseThrow();
+
+        assertTrue(updatedUser.isActive());
+    }
+
+    @Test
+    void switchStatus_shouldThrowException_whenUserDoesNotExist() {
+
+        UUID id = UUID.randomUUID();
+
+        assertThrows(
+                UserNotFoundException.class,
+                () -> userService.switchStatus(id)
+        );
+    }
+
 }

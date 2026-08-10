@@ -2,6 +2,7 @@ package app.web.quest;
 
 import app.model.dto.hero.HeroDTO;
 import app.model.dto.quest.CreateQuestDTO;
+import app.model.dto.quest.EditQuestDTO;
 import app.model.dto.quest.QuestDTO;
 import app.model.dto.quest.QuestResultDTO;
 import app.model.entity.hero.HeroClass;
@@ -306,4 +307,115 @@ public class QuestControllerApiTest {
 
         verifyNoInteractions(questService);
     }
+
+    @Test
+    void editQuest_withValidData_asAdmin_shouldRedirectToAdminQuests_andStatus302() throws Exception {
+
+        AuthenticationUserDetails admin = UserFactory.getAdminUser();
+
+        UUID questId = UUID.randomUUID();
+
+        MockHttpServletRequestBuilder request = put("/admin/quests/edit")
+                .with(user(admin))
+                .with(csrf())
+                .param("id", questId.toString())
+                .param("title", "Defeat the Goblins")
+                .param("description", "Clear the nearby forest.")
+                .param("requiredLevel", "1")
+                .param("rewardXp", "50")
+                .param("rewardGold", "25")
+                .param("questType", "COMBAT");
+
+        mockMvc.perform(request)
+                .andExpect(status().isFound())
+                .andExpect(view().name("redirect:/admin/quests"));
+
+        ArgumentCaptor<EditQuestDTO> captor =
+                ArgumentCaptor.forClass(EditQuestDTO.class);
+
+        verify(questService).editQuest(captor.capture());
+
+        EditQuestDTO questData = captor.getValue();
+
+        assertEquals(questId, questData.getId());
+        assertEquals("Defeat the Goblins", questData.getTitle());
+        assertEquals("Clear the nearby forest.", questData.getDescription());
+        assertEquals(1, questData.getRequiredLevel());
+        assertEquals(50, questData.getRewardXp());
+        assertEquals(25, questData.getRewardGold());
+        assertEquals(QuestType.COMBAT, questData.getQuestType());
+    }
+
+    @Test
+    void editQuest_withInvalidData_asAdmin_shouldReturnEditQuestView_andStatus200() throws Exception {
+
+        AuthenticationUserDetails admin = UserFactory.getAdminUser();
+
+        List<QuestDTO> quests = List.of(
+                QuestDTO.builder()
+                        .id(UUID.randomUUID())
+                        .title("Existing Quest")
+                        .description("An existing quest.")
+                        .questType(QuestType.COMBAT)
+                        .requiredLevel(1)
+                        .rewardXp(50)
+                        .rewardGold(25)
+                        .build()
+        );
+
+        when(questService.getAllQuests()).thenReturn(quests);
+
+        MockHttpServletRequestBuilder request = put("/admin/quests/edit")
+                .with(user(admin))
+                .with(csrf())
+                .param("id", "")
+                .param("title", "")
+                .param("description", "")
+                .param("requiredLevel", "0")
+                .param("rewardXp", "-10")
+                .param("rewardGold", "-5")
+                .param("questType", "");
+
+        mockMvc.perform(request)
+                .andExpect(status().isOk())
+                .andExpect(view().name("edit-quest"))
+                .andExpect(model().attributeExists("questData"))
+                .andExpect(model().attribute("quests", quests))
+                .andExpect(model().attributeHasFieldErrors("questData", "id"))
+                .andExpect(model().attributeHasFieldErrors("questData", "title"))
+                .andExpect(model().attributeHasFieldErrors("questData", "description"))
+                .andExpect(model().attributeHasFieldErrors("questData", "requiredLevel"))
+                .andExpect(model().attributeHasFieldErrors("questData", "rewardXp"))
+                .andExpect(model().attributeHasFieldErrors("questData", "rewardGold"))
+                .andExpect(model().attributeHasFieldErrors("questData", "questType"));
+
+        verify(questService).getAllQuests();
+        verify(questService, never()).editQuest(any(EditQuestDTO.class));
+    }
+
+    @Test
+    void editQuest_asUser_shouldReturnForbidden_andStatus403() throws Exception {
+
+        AuthenticationUserDetails user = UserFactory.getUserPrincipal();
+        user.setRole(Role.USER);
+
+        UUID questId = UUID.randomUUID();
+
+        MockHttpServletRequestBuilder request = put("/admin/quests/edit")
+                .with(user(user))
+                .with(csrf())
+                .param("id", questId.toString())
+                .param("title", "Defeat the Goblins")
+                .param("description", "Clear the nearby forest.")
+                .param("requiredLevel", "1")
+                .param("rewardXp", "50")
+                .param("rewardGold", "25")
+                .param("questType", "COMBAT");
+
+        mockMvc.perform(request)
+                .andExpect(status().isForbidden());
+
+        verifyNoInteractions(questService);
+    }
+
 }

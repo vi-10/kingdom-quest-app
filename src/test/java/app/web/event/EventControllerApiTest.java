@@ -2,6 +2,8 @@ package app.web.event;
 
 import app.model.dto.event.ActiveEventResponse;
 import app.model.dto.event.CreateEventRequest;
+import app.model.dto.event.EditEventRequest;
+import app.model.dto.event.EventDTO;
 import app.model.entity.quest.QuestType;
 import app.model.entity.user.Role;
 import app.security.AuthenticationUserDetails;
@@ -17,6 +19,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.UUID;
 
 import static org.mockito.Mockito.*;
@@ -196,6 +199,57 @@ public class EventControllerApiTest {
                 .param("end", "2026-08-07T22:00");
 
         mockMvc.perform(httpRequest)
+                .andExpect(status().isForbidden());
+
+        verifyNoInteractions(eventService);
+    }
+
+
+    @Test
+    void getEditEventPage_shouldReturnEditEventView_andStatus200() throws Exception {
+
+        AuthenticationUserDetails adminPrincipal = UserFactory.getAdminUser();
+
+        List<EventDTO> events = List.of(
+                EventDTO.builder()
+                        .id(UUID.randomUUID())
+                        .title("Double Combat Rewards")
+                        .description("Combat quests give increased rewards.")
+                        .affectedQuestType(QuestType.COMBAT)
+                        .bonusXp(50)
+                        .bonusGold(25)
+                        .start(LocalDateTime.of(2026, 8, 1, 10, 0))
+                        .end(LocalDateTime.of(2026, 8, 7, 22, 0))
+                        .build()
+        );
+
+        when(eventService.getAllEvents()).thenReturn(events);
+
+        MockHttpServletRequestBuilder request = get("/admin/events/edit")
+                .with(user(adminPrincipal));
+
+        mockMvc.perform(request)
+                .andExpect(status().isOk())
+                .andExpect(view().name("edit-event"))
+                .andExpect(model().attributeExists("eventData"))
+                .andExpect(model().attribute("eventData",
+                        EditEventRequest.builder().build()))
+                .andExpect(model().attribute("events", events));
+
+        verify(eventService).getAllEvents();
+    }
+
+    @Test
+    void getEditEventPage_asUser_shouldReturnForbidden() throws Exception {
+
+        AuthenticationUserDetails user = UserFactory.getUserPrincipal();
+
+        user.setRole(Role.USER);
+
+        MockHttpServletRequestBuilder request = get("/admin/events/edit")
+                .with(user(user));
+
+        mockMvc.perform(request)
                 .andExpect(status().isForbidden());
 
         verifyNoInteractions(eventService);

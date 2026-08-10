@@ -17,12 +17,12 @@ https://github.com/vi-10/events-svc
 
 The application follows a layered architecture:
 
-Controllers — handle HTTP requests and return Thymeleaf views
-Services — contain business logic
-Repositories — provide database access through Spring Data JPA
-DTOs — transfer data between application layers
-Mappers — convert entities to DTOs
-Security — handles authentication and role-based authorization
+- Controllers — handle HTTP requests and return Thymeleaf views
+= Services — contain business logic
+- Repositories — provide database access through Spring Data JPA
+- DTOs — transfer data between application layers
+- Mappers — convert entities to DTOs
+- Security — handles authentication and role-based authorization
 
 The Events functionality is separated into an independent REST microservice.
 
@@ -32,12 +32,12 @@ The main application communicates with the Events microservice through REST endp
 
 The microservice is responsible for:
 
-Creating events
-Editing events
-Deleting events
-Retrieving the active event
-Automatically managing event status
-Caching event data
+- Creating events
+- Editing events
+- Deleting events
+- Retrieving the active event
+- Automatically managing event status
+- Caching event data
 
 The main application communicates with the microservice through a REST client.
 
@@ -233,9 +233,9 @@ Admins can:
 Administrators can manage kingdom events through the main application's admin interface.
 
 Admins can:
-Create events
-Edit events
-Delete events
+- Create events
+- Edit events
+- Delete events
 
 Event management is handled through the separate Events microservice.
 
@@ -257,12 +257,12 @@ All forms include server-side validation.
 
 Examples include:
 
-Username length constraints
-Password strength validation
-Required fields for registration
-Quest validation (level, type, rewards)
-Item validation (cost, class restrictions)
-Event validation (title, description, quest type, rewards, start/end times)
+- Username length constraints
+- Password strength validation
+- Required fields for registration
+- Quest validation (level, type, rewards)
+- Item validation (cost, class restrictions)
+- Event validation (title, description, quest type, rewards, start/end times)
 
 Validation errors are displayed in the UI using Thymeleaf.
 
@@ -308,9 +308,9 @@ The Events REST microservice also validates incoming event creation and editing 
 
 The application contains multiple levels of automated tests:
 
-Unit tests
-Integration tests
-API/controller tests
+- Unit tests
+- Integration tests
+- API/controller tests
 
 The tests cover the main services, controllers, validation, authentication, authorization, and REST communication.
 

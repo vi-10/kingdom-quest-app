@@ -56,5 +56,15 @@ public class UserFactory {
                 .build();
     }
 
+    public static AuthenticationUserDetails getAdminUser(){
+
+        return AuthenticationUserDetails.builder()
+                .id(UUID.randomUUID())
+                .username("AdminUser")
+                .role(Role.ADMIN)
+                .isActive(true)
+                .build();
+    }
+
 
 }

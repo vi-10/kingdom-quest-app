@@ -243,6 +243,14 @@ The main application provides the administrative UI and delegates event operatio
 
 ---
 
+## Error Handling
+
+The application uses custom exceptions and centralized exception handling to manage errors consistently.
+
+Handled cases include missing resources, duplicate data, invalid input, unauthorized actions, and other business rule violations.
+
+---
+
 ## Validation
 
 All forms include server-side validation.

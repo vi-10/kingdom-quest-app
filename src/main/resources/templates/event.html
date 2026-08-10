@@ -87,7 +87,7 @@
 
             <p>
                 <span>Starts:</span>
-                <span th:text="${event.start}">
+                <span th:text="${#temporals.format(event.start, 'dd-MM-yyyy HH:mm')}">
                     2026-01-01
                 </span>
             </p>
@@ -95,7 +95,7 @@
 
             <p>
                 <span>Ends:</span>
-                <span th:text="${event.end}">
+                <span th:text="${#temporals.format(event.end, 'dd-MM-yyyy HH:mm')}">
                     2026-01-07
                 </span>
             </p>

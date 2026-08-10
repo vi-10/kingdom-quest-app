@@ -418,4 +418,35 @@ public class QuestControllerApiTest {
         verifyNoInteractions(questService);
     }
 
+    @Test
+    void getDeleteQuestPage_withQuests_asAdmin_shouldReturnDeleteQuestView_andStatus200() throws Exception {
+
+        AuthenticationUserDetails admin = UserFactory.getAdminUser();
+
+        List<QuestDTO> quests = List.of(
+                QuestDTO.builder()
+                        .id(UUID.randomUUID())
+                        .title("Defeat the Goblins")
+                        .description("Clear the nearby forest.")
+                        .questType(QuestType.COMBAT)
+                        .requiredLevel(1)
+                        .rewardXp(50)
+                        .rewardGold(25)
+                        .build()
+        );
+
+        when(questService.getAllQuests()).thenReturn(quests);
+
+        MockHttpServletRequestBuilder request = get("/admin/quests/delete")
+                .with(user(admin));
+
+        mockMvc.perform(request)
+                .andExpect(status().isOk())
+                .andExpect(view().name("delete-quest"))
+                .andExpect(model().attribute("quests", quests))
+                .andExpect(model().attribute("noQuests", false));
+
+        verify(questService).getAllQuests();
+    }
+
 }

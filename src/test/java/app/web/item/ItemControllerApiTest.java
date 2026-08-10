@@ -1,6 +1,7 @@
 package app.web.item;
 
 import app.model.dto.hero.HeroDTO;
+import app.model.dto.heroitem.InventoryItemDTO;
 import app.model.dto.item.ForgeResultDTO;
 import app.model.dto.item.ItemDTO;
 import app.model.entity.hero.HeroClass;
@@ -135,6 +136,32 @@ public class ItemControllerApiTest {
 
     }
 
+    @Test
+    void getInventory_shouldReturnInventoryView_andStatus200() throws Exception
+    {
+        AuthenticationUserDetails principal = UserFactory.getUserPrincipal();
+        UUID userId = principal.getId();
+
+        List<InventoryItemDTO> items = List.of(
+                InventoryItemDTO.builder()
+                        .heroItemId(UUID.randomUUID())
+                        .name("Iron Sword")
+                        .rarity(ItemRarity.COMMON)
+                        .build()
+        );
+
+
+        when(itemService.getInventory(userId)).thenReturn(items);
+
+        MockHttpServletRequestBuilder request = get("/items/inventory") .with(user(principal));
+
+        mockMvc.perform(request)
+                .andExpect(status().isOk())
+                .andExpect(view().name("inventory"))
+                .andExpect(model().attribute("items", items));
+
+        verify(itemService).getInventory(userId);
+    }
 
 
 }

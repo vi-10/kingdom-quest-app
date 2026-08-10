@@ -2,6 +2,7 @@ package app.web.quest;
 
 import app.model.dto.hero.HeroDTO;
 import app.model.dto.quest.QuestDTO;
+import app.model.dto.quest.QuestResultDTO;
 import app.model.entity.hero.HeroClass;
 import app.model.entity.quest.QuestType;
 import app.security.AuthenticationUserDetails;
@@ -86,5 +87,59 @@ public class QuestControllerApiTest {
 
         verify(heroService).getByUserId(userId);
         verify(questService).getAllQuests();
+    }
+
+    @Test
+    void completeQuest_shouldReturnQuestResultView_andStatus200() throws Exception {
+
+        AuthenticationUserDetails principal = getUserPrincipal();
+        UUID userId = principal.getId();
+        UUID questId = UUID.randomUUID();
+
+        QuestResultDTO result = QuestResultDTO.builder()
+                .success(true)
+                .message("You earned 50 XP and 25 gold!")
+                .build();
+
+        when(questService.completeQuest(questId, userId))
+                .thenReturn(result);
+
+        MockHttpServletRequestBuilder request = post("/quests/{id}/complete", questId)
+                .with(user(principal))
+                .with(csrf());
+
+        mockMvc.perform(request)
+                .andExpect(status().isOk())
+                .andExpect(view().name("quest-result"))
+                .andExpect(model().attribute("result", result));
+
+        verify(questService).completeQuest(questId, userId);
+    }
+
+    @Test
+    void completeQuest_whenQuestCannotBeCompleted_shouldReturnQuestResultView() throws Exception {
+
+        AuthenticationUserDetails principal = getUserPrincipal();
+        UUID userId = principal.getId();
+        UUID questId = UUID.randomUUID();
+
+        QuestResultDTO result = QuestResultDTO.builder()
+                .success(false)
+                .message("Your hero class cannot complete this quest.")
+                .build();
+
+        when(questService.completeQuest(questId, userId))
+                .thenReturn(result);
+
+        MockHttpServletRequestBuilder request = post("/quests/{id}/complete", questId)
+                .with(user(principal))
+                .with(csrf());
+
+        mockMvc.perform(request)
+                .andExpect(status().isOk())
+                .andExpect(view().name("quest-result"))
+                .andExpect(model().attribute("result", result));
+
+        verify(questService).completeQuest(questId, userId);
     }
 }

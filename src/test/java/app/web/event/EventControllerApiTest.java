@@ -387,6 +387,42 @@ public class EventControllerApiTest {
         verify(eventService).getAllEvents();
     }
 
+    @Test
+    void deleteEvent_asAdmin_shouldDeleteEvent_andRedirectToAdminEvents() throws Exception {
+
+        AuthenticationUserDetails principal = UserFactory.getAdminUser();
+        UUID eventId = UUID.randomUUID();
+
+        MockHttpServletRequestBuilder request = delete("/admin/events/delete")
+                .with(user(principal))
+                .with(csrf())
+                .param("eventId", eventId.toString());
+
+        mockMvc.perform(request)
+                .andExpect(status().is3xxRedirection())
+                .andExpect(view().name("redirect:/admin/events"));
+
+        verify(eventService).deleteEvent(eventId);
+    }
+
+    @Test
+    void deleteEvent_asUser_shouldReturnForbidden_andNotCallService() throws Exception {
+
+        AuthenticationUserDetails user = UserFactory.getUserPrincipal();
+        user.setRole(Role.USER);
+        UUID eventId = UUID.randomUUID();
+
+        MockHttpServletRequestBuilder request = delete("/admin/events/delete")
+                .with(user(user))
+                .with(csrf())
+                .param("eventId", eventId.toString());
+
+        mockMvc.perform(request)
+                .andExpect(status().isForbidden());
+
+        verifyNoInteractions(eventService);
+    }
+
 
 
 

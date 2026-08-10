@@ -255,7 +255,105 @@ public class EventControllerApiTest {
         verifyNoInteractions(eventService);
     }
 
+    @Test
+    void editEvent_asAdmin_shouldEditEvent_andRedirectToAdminEvents() throws Exception {
 
+        AuthenticationUserDetails principal = UserFactory.getAdminUser();
+
+        UUID eventId = UUID.randomUUID();
+
+        EditEventRequest request = EditEventRequest.builder()
+                .id(eventId)
+                .title("Double XP Weekend")
+                .description("All combat quests give bonus XP.")
+                .affectedQuestType(QuestType.COMBAT)
+                .bonusXp(100)
+                .bonusGold(50)
+                .start(LocalDateTime.now().plusDays(1))
+                .end(LocalDateTime.now().plusDays(2))
+                .build();
+
+        mockMvc.perform(put("/admin/events/edit")
+                        .with(user(principal))
+                        .with(csrf())
+                        .flashAttr("eventData", request))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(view().name("redirect:/admin/events"));
+
+        verify(eventService).editEvent(request);
+    }
+
+    @Test
+    void editEvent_asAdmin_whenValidationErrors_shouldReturnEditEventView() throws Exception {
+
+        AuthenticationUserDetails principal = UserFactory.getAdminUser();
+
+        UUID eventId = UUID.randomUUID();
+
+        EditEventRequest request = EditEventRequest.builder()
+                .id(eventId)
+                .title("")
+                .description("Some description")
+                .affectedQuestType(QuestType.COMBAT)
+                .bonusXp(100)
+                .bonusGold(50)
+                .start(LocalDateTime.now().plusDays(1))
+                .end(LocalDateTime.now().plusDays(2))
+                .build();
+
+        List<EventDTO> events = List.of(
+                EventDTO.builder()
+                        .id(UUID.randomUUID())
+                        .title("Existing Event")
+                        .description("Existing event description")
+                        .affectedQuestType(QuestType.COMBAT)
+                        .bonusXp(50)
+                        .bonusGold(25)
+                        .start(LocalDateTime.now())
+                        .end(LocalDateTime.now().plusDays(1))
+                        .build()
+        );
+
+        when(eventService.getAllEvents()).thenReturn(events);
+
+        mockMvc.perform(put("/admin/events/edit")
+                        .with(user(principal))
+                        .with(csrf())
+                        .flashAttr("eventData", request))
+                .andExpect(status().isOk())
+                .andExpect(view().name("edit-event"))
+                .andExpect(model().attribute("events", events));
+
+        verify(eventService).getAllEvents();
+        verify(eventService, never()).editEvent(any(EditEventRequest.class));
+
+    }
+
+    @Test
+    void editEvent_asUser_shouldReturnForbidden_andStatus403() throws Exception {
+
+        AuthenticationUserDetails user = UserFactory.getUserPrincipal();
+        user.setRole(Role.USER);
+
+        UUID questId = UUID.randomUUID();
+
+        MockHttpServletRequestBuilder request = put("/admin/events/edit")
+                .with(user(user))
+                .with(csrf())
+                .param("id", questId.toString())
+                .param("title", "Double Combat Rewards")
+                .param("description", "Combat quests give increased rewards.")
+                .param("affectedQuestType", QuestType.COMBAT.name())
+                .param("bonusXp", Integer.toString(50))
+                .param("bonusGold", Integer.toString(25))
+                .param("start", "2026-08-01T10:00")
+                .param("end", "2026-08-07T22:00");
+
+        mockMvc.perform(request)
+                .andExpect(status().isForbidden());
+
+        verifyNoInteractions(eventService);
+    }
 
 
 

@@ -5,6 +5,7 @@ import app.model.dto.quest.QuestDTO;
 import app.model.dto.quest.QuestResultDTO;
 import app.model.entity.hero.HeroClass;
 import app.model.entity.quest.QuestType;
+import app.model.entity.user.Role;
 import app.security.AuthenticationUserDetails;
 import app.security.CustomAuthenticationFailureHandler;
 import app.service.hero.HeroService;
@@ -22,8 +23,7 @@ import java.util.List;
 import java.util.UUID;
 
 import static app.util.user.UserFactory.getUserPrincipal;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
@@ -141,5 +141,35 @@ public class QuestControllerApiTest {
                 .andExpect(model().attribute("result", result));
 
         verify(questService).completeQuest(questId, userId);
+    }
+
+    @Test
+    void getCreateQuestPage_asAdmin_shouldReturnCreateQuestView_andStatus200() throws Exception {
+
+        AuthenticationUserDetails principal = UserFactory.getAdminUser();
+
+        MockHttpServletRequestBuilder request = get("/admin/quests/create")
+                .with(user(principal));
+
+        mockMvc.perform(request)
+                .andExpect(status().isOk())
+                .andExpect(view().name("create-quest"))
+                .andExpect(model().attributeExists("questData"));
+    }
+
+    @Test
+    void getCreateQuestPage_asUser_shouldReturnForbidden() throws Exception {
+
+        AuthenticationUserDetails principal = UserFactory.getUserPrincipal();
+
+        principal.setRole(Role.USER);
+
+        MockHttpServletRequestBuilder request = get("/admin/quests/create")
+                .with(user(principal));
+
+        mockMvc.perform(request)
+                .andExpect(status().isForbidden());
+
+        verifyNoInteractions(questService);
     }
 }

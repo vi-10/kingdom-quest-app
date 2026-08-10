@@ -449,4 +449,40 @@ public class QuestControllerApiTest {
         verify(questService).getAllQuests();
     }
 
+    @Test
+    void deleteQuest_asAdmin_shouldDeleteQuest_andRedirectToAdminQuests() throws Exception {
+
+        AuthenticationUserDetails admin = UserFactory.getAdminUser();
+        UUID questId = UUID.randomUUID();
+
+        MockHttpServletRequestBuilder request = delete("/admin/quests/delete")
+                .param("questId", questId.toString())
+                .with(user(admin))
+                .with(csrf());
+
+        mockMvc.perform(request)
+                .andExpect(status().isFound())
+                .andExpect(view().name("redirect:/admin/quests"));
+
+        verify(questService).deleteQuest(questId);
+    }
+
+    @Test
+    void deleteQuest_asUser_shouldReturnForbidden_andNotCallService() throws Exception {
+
+        AuthenticationUserDetails user = UserFactory.getUserPrincipal();
+        user.setRole(Role.USER);
+        UUID questId = UUID.randomUUID();
+
+        MockHttpServletRequestBuilder request = delete("/admin/quests/delete")
+                .param("questId", questId.toString())
+                .with(user(user))
+                .with(csrf());
+
+        mockMvc.perform(request)
+                .andExpect(status().isForbidden());
+
+        verifyNoInteractions(questService);
+    }
+
 }

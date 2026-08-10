@@ -47,18 +47,18 @@ The main application communicates with the microservice through a REST client.
 
 ###Main Application
 
-Java 17
-Spring Boot 3.4.0
-Spring MVC
-Spring Security
-Spring Data JPA
-Thymeleaf
-MySQL
-Maven
-HTML5
-CSS3
-REST client
-BCrypt
+- Java 17
+- Spring Boot 3.4.0
+- Spring MVC
+- Spring Security
+- Spring Data JPA
+- Thymeleaf
+- MySQL
+- Maven
+- HTML5
+- CSS3
+- REST client
+- BCrypt
 
 ---
 
@@ -306,7 +306,7 @@ API/controller tests
 
 The tests cover the main services, controllers, validation, authentication, authorization, and REST communication.
 
---
+---
 
 ## Default Admin Account
 

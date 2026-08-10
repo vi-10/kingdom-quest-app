@@ -355,6 +355,38 @@ public class EventControllerApiTest {
         verifyNoInteractions(eventService);
     }
 
+    @Test
+    void getDeleteEventPage_shouldReturnDeleteEventView_andStatus200() throws Exception {
+
+        AuthenticationUserDetails principal = UserFactory.getAdminUser();
+
+        List<EventDTO> events = List.of(
+                EventDTO.builder()
+                        .id(UUID.randomUUID())
+                        .title("Double XP Weekend")
+                        .description("Combat quests provide bonus XP.")
+                        .affectedQuestType(QuestType.COMBAT)
+                        .bonusXp(100)
+                        .bonusGold(50)
+                        .start(LocalDateTime.of(2026, 8, 1, 10, 0))
+                        .end(LocalDateTime.of(2026, 8, 7, 22, 0))
+                        .build()
+        );
+
+        when(eventService.getAllEvents()).thenReturn(events);
+
+        MockHttpServletRequestBuilder request = get("/admin/events/delete")
+                .with(user(principal));
+
+        mockMvc.perform(request)
+                .andExpect(status().isOk())
+                .andExpect(view().name("delete-event"))
+                .andExpect(model().attribute("events", events))
+                .andExpect(model().attribute("noEvents", false));
+
+        verify(eventService).getAllEvents();
+    }
+
 
 
 

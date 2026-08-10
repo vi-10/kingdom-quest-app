@@ -260,4 +260,50 @@ public class QuestControllerApiTest {
 
         verifyNoInteractions(questService);
     }
+
+    @Test
+    void getEditQuestPage_asAdmin_shouldReturnEditQuestView_andStatus200() throws Exception {
+
+        AuthenticationUserDetails admin = UserFactory.getAdminUser();
+
+        List<QuestDTO> quests = List.of(
+                QuestDTO.builder()
+                        .id(UUID.randomUUID())
+                        .title("Defeat the Goblins")
+                        .description("Clear the nearby forest.")
+                        .questType(QuestType.COMBAT)
+                        .requiredLevel(1)
+                        .rewardXp(50)
+                        .rewardGold(25)
+                        .build()
+        );
+
+        when(questService.getAllQuests()).thenReturn(quests);
+
+        MockHttpServletRequestBuilder request = get("/admin/quests/edit")
+                .with(user(admin));
+
+        mockMvc.perform(request)
+                .andExpect(status().isOk())
+                .andExpect(view().name("edit-quest"))
+                .andExpect(model().attributeExists("questData"))
+                .andExpect(model().attribute("quests", quests));
+
+        verify(questService).getAllQuests();
+    }
+
+    @Test
+    void getEditQuestPage_asUser_shouldReturnForbidden_andStatus403() throws Exception {
+
+        AuthenticationUserDetails user = UserFactory.getUserPrincipal();
+        user.setRole(Role.USER);
+
+        MockHttpServletRequestBuilder request = get("/admin/quests/edit")
+                .with(user(user));
+
+        mockMvc.perform(request)
+                .andExpect(status().isForbidden());
+
+        verifyNoInteractions(questService);
+    }
 }

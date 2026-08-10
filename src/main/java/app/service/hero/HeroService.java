@@ -1,7 +1,6 @@
 package app.service.hero;
 
 import app.exception.HeroNotFoundException;
-import app.exception.UserNotFoundException;
 import app.mapper.hero.HeroMapper;
 import app.model.dto.hero.HeroDTO;
 import app.model.entity.hero.Hero;

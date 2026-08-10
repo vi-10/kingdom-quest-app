@@ -3,7 +3,6 @@ package app.service.quest;
 import app.exception.HeroNotFoundException;
 import app.exception.QuestAlreadyExistsException;
 import app.exception.QuestNotFoundException;
-import app.exception.UserNotFoundException;
 import app.mapper.quest.QuestMapper;
 import app.model.dto.event.ActiveEventResponse;
 import app.model.dto.quest.CreateQuestDTO;
@@ -20,7 +19,6 @@ import app.service.event.EventService;
 import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 
 import java.util.List;

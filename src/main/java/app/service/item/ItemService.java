@@ -3,7 +3,6 @@ package app.service.item;
 import app.exception.HeroNotFoundException;
 import app.exception.ItemNotFoundException;
 import app.exception.UnauthorizedException;
-import app.exception.UserNotFoundException;
 import app.mapper.item.ItemMapper;
 import app.model.dto.heroitem.InventoryItemDTO;
 import app.model.dto.item.ForgeResultDTO;

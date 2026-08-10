@@ -1,12 +1,8 @@
 package app.util.quest;
 
-import app.model.dto.quest.CreateQuestDTO;
-import app.model.dto.quest.EditQuestDTO;
 import app.model.entity.quest.Quest;
 import app.model.entity.quest.QuestType;
 import lombok.experimental.UtilityClass;
-
-import java.util.UUID;
 
 @UtilityClass
 public class QuestFactory {

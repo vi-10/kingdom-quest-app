@@ -45,7 +45,7 @@ The main application communicates with the microservice through a REST client.
 
 ## Technology Stack
 
-###Main Application
+### Main Application
 
 - Java 17
 - Spring Boot 3.4.0

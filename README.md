@@ -243,16 +243,6 @@ The main application provides the administrative UI and delegates event operatio
 
 ---
 
-## Security
-
-- Session-based authentication using HttpSession
-- Role-based authorization (ADMIN / PLAYER)
-- Admin endpoints protected via interceptor
-- Inactive users are automatically blocked
-- Passwords stored using BCrypt hashing
-
----
-
 ## Validation
 
 All forms include server-side validation.

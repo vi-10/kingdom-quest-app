@@ -1,6 +1,7 @@
 package app.web.quest;
 
 import app.model.dto.hero.HeroDTO;
+import app.model.dto.quest.CreateQuestDTO;
 import app.model.dto.quest.QuestDTO;
 import app.model.dto.quest.QuestResultDTO;
 import app.model.entity.hero.HeroClass;
@@ -12,6 +13,7 @@ import app.service.hero.HeroService;
 import app.service.quest.QuestService;
 import app.util.user.UserFactory;
 import org.junit.jupiter.api.Test;
+import org.mockito.ArgumentCaptor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.test.context.ActiveProfiles;
@@ -23,6 +25,7 @@ import java.util.List;
 import java.util.UUID;
 
 import static app.util.user.UserFactory.getUserPrincipal;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.*;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
@@ -166,6 +169,91 @@ public class QuestControllerApiTest {
 
         MockHttpServletRequestBuilder request = get("/admin/quests/create")
                 .with(user(principal));
+
+        mockMvc.perform(request)
+                .andExpect(status().isForbidden());
+
+        verifyNoInteractions(questService);
+    }
+
+    @Test
+    void createQuest_withValidData_asAdmin_shouldRedirectToAdminQuests_andStatus302() throws Exception {
+
+        AuthenticationUserDetails admin = UserFactory.getAdminUser();
+
+        MockHttpServletRequestBuilder request = post("/admin/quests/create")
+                .with(user(admin))
+                .with(csrf())
+                .param("title", "Defeat the Goblins")
+                .param("description", "Clear the nearby forest.")
+                .param("requiredLevel", "1")
+                .param("rewardXp", "50")
+                .param("rewardGold", "25")
+                .param("questType", "COMBAT");
+
+        mockMvc.perform(request)
+                .andExpect(status().isFound())
+                .andExpect(view().name("redirect:/admin/quests"));
+
+        ArgumentCaptor<CreateQuestDTO> captor =
+                ArgumentCaptor.forClass(CreateQuestDTO.class);
+
+        verify(questService).createQuest(captor.capture());
+
+        CreateQuestDTO questData = captor.getValue();
+
+        assertEquals("Defeat the Goblins", questData.getTitle());
+        assertEquals("Clear the nearby forest.", questData.getDescription());
+        assertEquals(1, questData.getRequiredLevel());
+        assertEquals(50, questData.getRewardXp());
+        assertEquals(25, questData.getRewardGold());
+        assertEquals(QuestType.COMBAT, questData.getQuestType());
+    }
+
+    @Test
+    void createQuest_withInvalidData_asAdmin_shouldReturnCreateQuestView_andStatus200() throws Exception {
+
+        AuthenticationUserDetails admin = UserFactory.getAdminUser();
+
+        MockHttpServletRequestBuilder request = post("/admin/quests/create")
+                .with(user(admin))
+                .with(csrf())
+                .param("title", "")
+                .param("description", "")
+                .param("requiredLevel", "0")
+                .param("rewardXp", "-10")
+                .param("rewardGold", "-5")
+                .param("questType", "");
+
+        mockMvc.perform(request)
+                .andExpect(status().isOk())
+                .andExpect(view().name("create-quest"))
+                .andExpect(model().attributeExists("questData"))
+                .andExpect(model().attributeHasFieldErrors("questData", "title"))
+                .andExpect(model().attributeHasFieldErrors("questData", "description"))
+                .andExpect(model().attributeHasFieldErrors("questData", "requiredLevel"))
+                .andExpect(model().attributeHasFieldErrors("questData", "rewardXp"))
+                .andExpect(model().attributeHasFieldErrors("questData", "rewardGold"))
+                .andExpect(model().attributeHasFieldErrors("questData", "questType"));
+
+        verifyNoInteractions(questService);
+    }
+
+    @Test
+    void createQuest_asUser_shouldReturnForbidden_andStatus403() throws Exception {
+
+        AuthenticationUserDetails user = UserFactory.getUserPrincipal();
+        user.setRole(Role.USER);
+
+        MockHttpServletRequestBuilder request = post("/admin/quests/create")
+                .with(user(user))
+                .with(csrf())
+                .param("title", "Defeat the Goblins")
+                .param("description", "Clear the nearby forest.")
+                .param("requiredLevel", "1")
+                .param("rewardXp", "50")
+                .param("rewardGold", "25")
+                .param("questType", "COMBAT");
 
         mockMvc.perform(request)
                 .andExpect(status().isForbidden());

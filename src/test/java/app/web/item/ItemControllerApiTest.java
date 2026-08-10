@@ -1,6 +1,7 @@
 package app.web.item;
 
 import app.model.dto.hero.HeroDTO;
+import app.model.dto.item.ForgeResultDTO;
 import app.model.dto.item.ItemDTO;
 import app.model.entity.hero.HeroClass;
 import app.model.entity.item.ItemRarity;
@@ -84,6 +85,56 @@ public class ItemControllerApiTest {
         verify(heroService).getByUserId(userId);
         verify(itemService).getAllItems();
     }
+
+    @Test
+    void forgeItem_shouldReturnForgeItemsView_andStatus200() throws Exception {
+
+        AuthenticationUserDetails principal = UserFactory.getUserPrincipal();
+        UUID userId = principal.getId();
+        UUID itemId = UUID.randomUUID();
+
+        ForgeResultDTO forgeResult = null;
+
+        HeroDTO hero = HeroDTO.builder()
+                .id(UUID.randomUUID())
+                .roleplayName("Test Hero")
+                .heroClass(HeroClass.WARRIOR)
+                .level(1)
+                .xp(0)
+                .gold(50)
+                .build();
+
+        List<ItemDTO> items = List.of(
+                ItemDTO.builder()
+                        .id(itemId)
+                        .name("Iron Sword")
+                        .heroClass(HeroClass.WARRIOR)
+                        .requiredGold(50)
+                        .rarity(ItemRarity.COMMON)
+                        .build()
+        );
+
+        when(itemService.forgeItem(itemId, userId)).thenReturn(forgeResult);
+        when(heroService.getByUserId(userId)).thenReturn(hero);
+        when(itemService.getAllItems()).thenReturn(items);
+
+        MockHttpServletRequestBuilder request = post("/items/" + itemId + "/forge")
+                .with(user(principal))
+                .with(csrf());
+
+        mockMvc.perform(request)
+                .andExpect(status().isOk())
+                .andExpect(view().name("forge-items"))
+                .andExpect(model().attribute("hero", hero))
+                .andExpect(model().attribute("items", items))
+                .andExpect(model().attribute("forgeResult", forgeResult));
+
+        verify(itemService).forgeItem(itemId, userId);
+        verify(heroService).getByUserId(userId);
+        verify(itemService).getAllItems();
+
+    }
+
 
 
 }

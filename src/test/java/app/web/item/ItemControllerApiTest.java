@@ -163,5 +163,16 @@ public class ItemControllerApiTest {
         verify(itemService).getInventory(userId);
     }
 
+    @Test void dropItem_shouldRedirectToInventory_andStatus302() throws Exception {
+        AuthenticationUserDetails principal = UserFactory.getUserPrincipal();
+        UUID heroItemId = UUID.randomUUID();
+        UUID userId = principal.getId();
+
+        MockHttpServletRequestBuilder request = delete("/items/inventory/{heroItemId}", heroItemId)
+                .with(user(principal)) .with(csrf()); mockMvc.perform(request)
+                .andExpect(status().isFound())
+                .andExpect(view().name("redirect:/items/inventory"));
+                verify(itemService).dropItem(heroItemId, userId);
+    }
 
 }

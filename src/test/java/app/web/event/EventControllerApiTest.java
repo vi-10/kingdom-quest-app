@@ -115,5 +115,95 @@ public class EventControllerApiTest {
         verifyNoInteractions(eventService);
     }
 
+    @Test
+    void createEvent_withValidData_asAdmin_shouldRedirectToAdminEvents() throws Exception {
+
+        AuthenticationUserDetails adminPrincipal = UserFactory.getAdminUser();
+
+        CreateEventRequest request = CreateEventRequest.builder()
+                .title("Double Combat Rewards")
+                .description("Combat quests give increased rewards.")
+                .affectedQuestType(QuestType.COMBAT)
+                .bonusXp(50)
+                .bonusGold(25)
+                .start(LocalDateTime.of(2026, 8, 1, 10, 0))
+                .end(LocalDateTime.of(2026, 8, 7, 22, 0))
+                .build();
+
+        MockHttpServletRequestBuilder httpRequest = post("/admin/events/create")
+                .with(user(adminPrincipal))
+                .with(csrf())
+                .param("title", request.getTitle())
+                .param("description", request.getDescription())
+                .param("affectedQuestType", request.getAffectedQuestType().name())
+                .param("bonusXp", request.getBonusXp().toString())
+                .param("bonusGold", request.getBonusGold().toString())
+                .param("start", "2026-08-01T10:00")
+                .param("end", "2026-08-07T22:00");
+
+        mockMvc.perform(httpRequest)
+                .andExpect(status().is3xxRedirection())
+                .andExpect(view().name("redirect:/admin/events"));
+
+        verify(eventService).createEvent(request);
+    }
+
+    @Test
+    void createEvent_withInvalidData_asAdmin_shouldReturnCreateEventView() throws Exception {
+
+        AuthenticationUserDetails adminPrincipal = UserFactory.getAdminUser();
+
+        MockHttpServletRequestBuilder request = post("/admin/events/create")
+                .with(user(adminPrincipal))
+                .with(csrf())
+                .param("title", "")
+                .param("description", "")
+                .param("bonusXp", "-10")
+                .param("bonusGold", "-5");
+
+        mockMvc.perform(request)
+                .andExpect(status().isOk())
+                .andExpect(view().name("create-event"))
+                .andExpect(model().attributeHasFieldErrors(
+                        "eventData",
+                        "title",
+                        "description",
+                        "affectedQuestType",
+                        "bonusXp",
+                        "bonusGold",
+                        "start",
+                        "end"
+                ));
+
+        verify(eventService, never()).createEvent(any(CreateEventRequest.class));
+    }
+
+    @Test
+    void createEvent_asUser_shouldReturnForbidden_andStatus403() throws Exception {
+
+        AuthenticationUserDetails user = UserFactory.getUserPrincipal();
+        user.setRole(Role.USER);
+
+        MockHttpServletRequestBuilder httpRequest = post("/admin/events/create")
+                .with(user(user))
+                .with(csrf())
+                .param("title", "Double Combat Rewards")
+                .param("description", "Combat quests give increased rewards.")
+                .param("affectedQuestType", QuestType.COMBAT.name())
+                .param("bonusXp", Integer.toString(50))
+                .param("bonusGold", Integer.toString(25))
+                .param("start", "2026-08-01T10:00")
+                .param("end", "2026-08-07T22:00");
+
+        mockMvc.perform(httpRequest)
+                .andExpect(status().isForbidden());
+
+        verifyNoInteractions(eventService);
+    }
+
+
+
+
+
 
 }

@@ -1,7 +1,9 @@
 package app.web.event;
 
 import app.model.dto.event.ActiveEventResponse;
+import app.model.dto.event.CreateEventRequest;
 import app.model.entity.quest.QuestType;
+import app.model.entity.user.Role;
 import app.security.AuthenticationUserDetails;
 import app.security.CustomAuthenticationFailureHandler;
 import app.service.event.EventService;
@@ -17,8 +19,7 @@ import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilde
 import java.time.LocalDateTime;
 import java.util.UUID;
 
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
@@ -81,5 +82,38 @@ public class EventControllerApiTest {
 
         verify(eventService).getActiveEvent();
     }
+
+    @Test
+    void getCreateEventPage_shouldReturnCreateEventView_andStatus200() throws Exception {
+
+        AuthenticationUserDetails adminPrincipal = UserFactory.getAdminUser();
+
+        MockHttpServletRequestBuilder request = get("/admin/events/create")
+                .with(user(adminPrincipal));
+
+        mockMvc.perform(request)
+                .andExpect(status().isOk())
+                .andExpect(view().name("create-event"))
+                .andExpect(model().attributeExists("eventData"))
+                .andExpect(model().attribute("eventData",
+                        CreateEventRequest.builder().build()));
+    }
+
+    @Test
+    void getCreateEventPage_asUser_shouldReturnForbidden() throws Exception {
+
+        AuthenticationUserDetails principal = UserFactory.getUserPrincipal();
+
+        principal.setRole(Role.USER);
+
+        MockHttpServletRequestBuilder request = get("/admin/events/create")
+                .with(user(principal));
+
+        mockMvc.perform(request)
+                .andExpect(status().isForbidden());
+
+        verifyNoInteractions(eventService);
+    }
+
 
 }

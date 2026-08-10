@@ -1,13 +1,33 @@
 package app.web.quest;
 
+import app.model.dto.hero.HeroDTO;
+import app.model.dto.quest.QuestDTO;
+import app.model.entity.hero.HeroClass;
+import app.model.entity.quest.QuestType;
+import app.security.AuthenticationUserDetails;
 import app.security.CustomAuthenticationFailureHandler;
 import app.service.hero.HeroService;
 import app.service.quest.QuestService;
+import app.util.user.UserFactory;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
+
+import java.util.List;
+import java.util.UUID;
+
+import static app.util.user.UserFactory.getUserPrincipal;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+
 
 @ActiveProfiles("test")
 @WebMvcTest(QuestController.class)
@@ -24,4 +44,47 @@ public class QuestControllerApiTest {
 
     @MockitoBean
     private CustomAuthenticationFailureHandler customAuthenticationFailureHandler;
+
+    @Test
+    void getQuests_shouldReturnAvailableQuestsView_andStatus200() throws Exception {
+
+        AuthenticationUserDetails principal = getUserPrincipal();
+        UUID userId = principal.getId();
+
+        HeroDTO hero = HeroDTO.builder()
+                .id(UUID.randomUUID())
+                .roleplayName("Test Hero")
+                .heroClass(HeroClass.WARRIOR)
+                .level(1)
+                .xp(0)
+                .gold(100)
+                .build();
+
+        List<QuestDTO> quests = List.of(
+                QuestDTO.builder()
+                        .id(UUID.randomUUID())
+                        .title("Defeat the Goblins")
+                        .description("Clear the nearby forest.")
+                        .questType(QuestType.COMBAT)
+                        .requiredLevel(1)
+                        .rewardXp(50)
+                        .rewardGold(25)
+                        .build()
+        );
+
+        when(heroService.getByUserId(userId)).thenReturn(hero);
+        when(questService.getAllQuests()).thenReturn(quests);
+
+        MockHttpServletRequestBuilder request = get("/quests")
+                .with(user(principal));
+
+        mockMvc.perform(request)
+                .andExpect(status().isOk())
+                .andExpect(view().name("available-quests"))
+                .andExpect(model().attribute("hero", hero))
+                .andExpect(model().attribute("quests", quests));
+
+        verify(heroService).getByUserId(userId);
+        verify(questService).getAllQuests();
+    }
 }

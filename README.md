@@ -13,7 +13,7 @@ https://github.com/vi-10/events-svc
 
 ---
 
-##Architecture
+## Architecture
 
 The application follows a layered architecture:
 
@@ -26,7 +26,7 @@ Security — handles authentication and role-based authorization
 
 The Events functionality is separated into an independent REST microservice.
 
-###Events Microservice
+### Events Microservice
 
 The main application communicates with the Events microservice through REST endpoints.
 
@@ -229,7 +229,7 @@ Admins can:
 
 ---
 
-####Event Management
+#### Event Management
 Administrators can manage kingdom events through the main application's admin interface.
 
 Admins can:

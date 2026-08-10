@@ -1,6 +1,7 @@
 package app.web.user;
 
 import app.model.dto.hero.HeroDTO;
+import app.model.dto.user.EditProfileRequest;
 import app.model.dto.user.RegisterDTO;
 import app.model.dto.user.UserDTO;
 import app.model.entity.hero.HeroClass;
@@ -10,6 +11,7 @@ import app.security.AuthenticationUserDetails;
 import app.security.CustomAuthenticationFailureHandler;
 import app.service.hero.HeroService;
 import app.service.user.UserService;
+import app.util.user.UserFactory;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -20,8 +22,10 @@ import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 
+import java.util.List;
 import java.util.UUID;
 
+import static app.util.user.UserFactory.getAdminUser;
 import static app.util.user.UserFactory.getUserPrincipal;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
@@ -154,6 +158,116 @@ public class UserControllerApiTest {
                 .andExpect(view().name("dashboard"))
                 .andExpect(model().attribute("user", user))
                 .andExpect(model().attribute("hero", hero));
+    }
+
+    @Test
+    void getAllUsers_whenUserIsAdmin_shouldReturnUsersView_andStatus200() throws Exception {
+
+        List<UserDTO> users = List.of(
+                UserDTO.builder()
+                        .id(UUID.randomUUID())
+                        .username("User1")
+                        .email("user1@test.com")
+                        .role(Role.USER)
+                        .build()
+        );
+
+        when(userService.getAllUsers()).thenReturn(users);
+
+        MockHttpServletRequestBuilder request = get("/admin/users")
+                .with(user(getAdminUser()));
+
+        mockMvc.perform(request)
+                .andExpect(status().isOk())
+                .andExpect(view().name("users"))
+                .andExpect(model().attribute("users", users));
+    }
+
+    @Test
+    void switchRole_shouldRedirectToUsers_andStatus302() throws Exception {
+
+        UUID userId = UUID.randomUUID();
+
+        MockHttpServletRequestBuilder request = put("/admin/users/{id}/role", userId)
+                .with(user(getAdminUser()))
+                .with(csrf());
+
+        mockMvc.perform(request)
+                .andExpect(status().isFound())
+                .andExpect(view().name("redirect:/admin/users"));
+
+        verify(userService).switchRole(userId);
+    }
+
+    @Test
+    void switchStatus_shouldRedirectToUsers_andStatus302() throws Exception {
+
+        UUID userId = UUID.randomUUID();
+
+        MockHttpServletRequestBuilder request = put("/admin/users/{id}/status", userId)
+                .with(user(getAdminUser()))
+                .with(csrf());
+
+        mockMvc.perform(request)
+                .andExpect(status().isFound())
+                .andExpect(view().name("redirect:/admin/users"));
+
+        verify(userService).switchStatus(userId);
+    }
+
+    @Test
+    void getEditPage_shouldReturnEditView_andStatus200() throws Exception {
+
+        MockHttpServletRequestBuilder request = get("/edit")
+                .with(user(UserFactory.getUserPrincipal()));
+
+        mockMvc.perform(request)
+                .andExpect(status().isOk())
+                .andExpect(view().name("edit"))
+                .andExpect(model().attributeExists("editData"));
+    }
+
+    @Test
+    void editProfile_shouldRedirectToDashboard_andStatus302() throws Exception {
+
+        AuthenticationUserDetails principal = UserFactory.getUserPrincipal();
+
+        MockHttpServletRequestBuilder request = put("/edit")
+                .with(user(principal))
+                .with(csrf())
+                .param("username", "NewUsername")
+                .param("email", "new@email.com")
+                .param("profilePicture", "")
+                .param("roleplayName", "NewHeroName");
+
+        mockMvc.perform(request)
+                .andExpect(status().isFound())
+                .andExpect(view().name("redirect:/dashboard"));
+
+        verify(userService).editProfile(eq(principal.getId()), any(EditProfileRequest.class));
+    }
+
+    @Test
+    void editProfile_withInvalidData_shouldReturnEditView_andStatus200() throws Exception {
+
+        MockHttpServletRequestBuilder request = put("/edit")
+                .with(user(UserFactory.getUserPrincipal()))
+                .with(csrf())
+                .param("username", "")
+                .param("email", "")
+                .param("roleplayName", "");
+
+        mockMvc.perform(request)
+                .andExpect(status().isOk())
+                .andExpect(view().name("edit"))
+                .andExpect(model().attributeHasFieldErrors(
+                        "editData",
+                        "username",
+                        "email",
+                        "roleplayName"
+                ));
+
+        verify(userService, never()).editProfile(any(), any());
     }
 
 
